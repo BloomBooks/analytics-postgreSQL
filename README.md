@@ -18,3 +18,6 @@ To create the schema dump, I used pgAdmin.
 
 You should be able to do the same thing using the command line tool, but we were having issues with it.
 https://www.postgresql.org/docs/10/static/app-pgdump.html
+
+## Additional metadata backup
+We are also storing some other files which were helpful during the initial creation and setup of the database. These files are in the AdditionalMetadataBackup directory. Much of this likely duplicates table, view, and trigger creation script already included in bloomsegment.schema.backup, but we wanted to store both to be safe.
