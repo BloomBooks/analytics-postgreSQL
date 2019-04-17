@@ -26,7 +26,7 @@ CREATE OR REPLACE VIEW bloomreader.BooksGT AS
 			SELECT * FROM bloomreaderbeta.pages_read) AS a
         INNER JOIN public.languagecodes AS c 
            	ON a.content_lang=c.langid OR a.content_lang=c.langid2
-    WHERE a.branding_project_name::text LIKE '%Juarez-Guatemala%'
+    WHERE a.branding_project_name= 'Juarez-Guatemala'
     ORDER BY a.title;
     
 GRANT SELECT ON bloomreader.BooksGT TO bloomgtuser;
