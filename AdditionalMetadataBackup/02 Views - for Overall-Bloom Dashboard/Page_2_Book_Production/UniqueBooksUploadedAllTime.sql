@@ -10,3 +10,9 @@ CREATE VIEW bloomreadertest.BooksUploadedAllTime AS
 
 GRANT SELECT ON bloomreadertest.BooksUploadedAllTime TO readbloomtester;
 select * FROM bloomreadertest.BooksUploadedAllTime;
+
+SELECT a.url,
+          a.timestamp 
+	FROM   bloomapp.upload_book_success AS a
+		where
+	a.timestamp < date_trunc('month', CURRENT_DATE); 
