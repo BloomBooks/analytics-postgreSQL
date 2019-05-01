@@ -1,4 +1,4 @@
-REVOKE SELECT ON bloomreader.Languages FROM readbloomtester;
+REVOKE SELECT ON bloomreader.Languages FROM bloomreaderuser;
 DROP VIEW bloomreader.Languages ;
 
 CREATE VIEW bloomreader.Languages AS
@@ -7,8 +7,6 @@ CREATE VIEW bloomreader.Languages AS
           WHERE b.Country = 'Guatemala'
           GROUP BY  b.Country ;
 
-
-GRANT SELECT ON bloomreader.Languages TO readbloomtester;
-GRANT SELECT ON bloomreader.Languages TO bloomgtuser;
+GRANT SELECT ON bloomreader.Languages TO bloomreaderuser;
 select * FROM bloomreader.Languages;
 

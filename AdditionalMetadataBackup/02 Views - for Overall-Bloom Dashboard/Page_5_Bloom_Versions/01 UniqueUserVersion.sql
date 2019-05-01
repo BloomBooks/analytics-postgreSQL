@@ -1,7 +1,7 @@
---REVOKE SELECT ON bloomreadertest.UniqueUserVersion FROM readbloomtester;
---DROP VIEW bloomreadertest.UniqueUserVersion;
+--REVOKE SELECT ON bloomapp.UniqueUserVersion FROM bloomappuser;
+--DROP VIEW bloomapp.UniqueUserVersion;
 
-CREATE VIEW bloomreadertest.UniqueUserVersion AS
+CREATE VIEW bloomapp.UniqueUserVersion AS
 	select DISTINCT ON (a.user_id) USER_ID,
 			a.version, CAST ('03 mo' as Text) AS Reference
 	from bloomapp.create_book AS a
@@ -10,9 +10,9 @@ CREATE VIEW bloomreadertest.UniqueUserVersion AS
 	 	 and
 	 a.timestamp < date_trunc('month', CURRENT_DATE);  
 	
-GRANT SELECT ON bloomreadertest.UniqueUserVersion TO readbloomtester;
-select * FROM bloomreadertest.UniqueUserVersion;
+GRANT SELECT ON bloomapp.UniqueUserVersion TO bloomappuser;
+select * FROM bloomapp.UniqueUserVersion;
 
 select * from bloomapp.create_book order by user_id ASC LIMIT 100;
 
-GRANT ALL PRIVILEGES on bloomreadertest.LaunchLocs to bloomappuser,readbloom, silpgadmin, segment;
+GRANT ALL PRIVILEGES on bloomapp.UniqueUserVersion to bloomappuser,readbloom, silpgadmin, segment;

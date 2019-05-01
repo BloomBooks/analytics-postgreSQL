@@ -1,4 +1,4 @@
-REVOKE SELECT ON bloomreader.TimePerMonGT FROM readbloomtester;
+REVOKE SELECT ON bloomreader.TimePerMonGT FROM bloomreaderuser;
 DROP VIEW bloomreader.TimePerMonGT CASCADE;
 
 CREATE OR REPLACE VIEW bloomreader.TimePerMonGT AS
@@ -17,6 +17,5 @@ CREATE OR REPLACE VIEW bloomreader.TimePerMonGT AS
 	 AND CAST((a.timestamp AT TIME ZONE 'AEST') AS date) > '2019-02-26'
 	GROUP BY CAST((a.timestamp AT TIME ZONE 'AEST') AS date), a.id ;
 
-GRANT SELECT ON bloomreader.TimePerMonGT TO readbloomtester;
-GRANT SELECT ON bloomreader.TimePerMonGT TO bloomgtuser;
+GRANT SELECT ON bloomreader.TimePerMonGT TO bloomreaderuser;
 select * FROM bloomreader.TimePerMonGT;
