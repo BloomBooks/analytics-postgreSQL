@@ -1,7 +1,7 @@
-REVOKE SELECT ON bloomreadertest.TimePerMon FROM readbloomtester;
-DROP VIEW bloomreadertest.TimePerMon CASCADE;
+--REVOKE SELECT ON bloomreader.TimePerMon FROM bloomreaderuser;
+--DROP VIEW bloomreader.TimePerMon CASCADE;
 
-CREATE VIEW bloomreadertest.TimePerMon AS
+CREATE VIEW bloomreader.TimePerMon AS
 	SELECT COUNT(*) AS num_opened,
           CAST (date_part('YEAR',
                     a.timestamp AT TIME ZONE 'AEST'       
@@ -18,8 +18,8 @@ CREATE VIEW bloomreadertest.TimePerMon AS
 	  --AND a.timestamp < date_trunc('month', CURRENT_DATE)
     GROUP BY a.timestamp, a.timestamp::timestamp::date, a.context_ip;
 
-GRANT SELECT ON bloomreadertest.TimePerMon TO readbloomtester;
-select * FROM bloomreadertest.TimePerMon as a
+GRANT SELECT ON bloomreader.TimePerMon TO bloomreaderuser;
+select * FROM bloomreader.TimePerMon as a
  Where a.timestamp > '2017-06-30'
   ORDER BY a.timestamp;
 

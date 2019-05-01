@@ -1,7 +1,7 @@
---REVOKE SELECT ON bloomreadertest.UsersAllTimeFromLaunch FROM readbloomtester;
---DROP VIEW bloomreadertest.UsersAllTimeFromLaunch;
+--REVOKE SELECT ON bloomapp.UsersAllTimeFromLaunch FROM bloomappuser;
+--DROP VIEW bloomapp.UsersAllTimeFromLaunch;
 
-CREATE VIEW bloomreadertest.UsersAllTimeFromLaunch AS
+CREATE VIEW bloomapp.UsersAllTimeFromLaunch AS
 	SELECT DISTINCT (a.user_id),
     ( SELECT DISTINCT d.country_name
            FROM countryregioncitylu AS d
@@ -9,8 +9,8 @@ CREATE VIEW bloomreadertest.UsersAllTimeFromLaunch AS
     FROM bloomapp.launch AS a
     GROUP BY a.location_uid, a.user_id
     ORDER BY a.user_id ;
-GRANT SELECT ON bloomreadertest.UsersAllTimeFromLaunch TO readbloomtester;	
-SELECT * FROM bloomreadertest.UsersAllTimeFromLaunch;
+GRANT SELECT ON bloomapp.UsersAllTimeFromLaunch TO bloomappuser;	
+SELECT * FROM bloomapp.UsersAllTimeFromLaunch;
 
 	SELECT DISTINCT (a.user_id) FROM bloomapp.launch AS a;
 	SELECT DISTINCT (a.user_id) ,
@@ -26,12 +26,12 @@ SELECT DISTINCT (a.user_id), d.country_name
     WHERE a.location_uid = d.loc_uid
 	 GROUP BY d.country_name, a.user_id;
 	
-select COUNT(DISTINCT(a.user_id)) FROM bloomreadertest.UsersAllTimeFromLaunch AS a;	
+select COUNT(DISTINCT(a.user_id)) FROM bloomapp.UsersAllTimeFromLaunch AS a;	
 	
-select COUNT(a.user_id) FROM bloomreadertest.UsersAllTimeFromLaunch AS a
+select COUNT(a.user_id) FROM bloomapp.UsersAllTimeFromLaunch AS a
    WHERE a.Country IS NULL;
 
-select COUNT(a.user_id) FROM bloomreadertest.UsersAllTimeFromLaunch AS a
+select COUNT(a.user_id) FROM bloomapp.UsersAllTimeFromLaunch AS a
    WHERE a.Country ='Philippines';
 
 select COUNT(DISTINCT(a.user_id)) from bloomapp.launch AS a

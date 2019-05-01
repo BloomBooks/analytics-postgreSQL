@@ -1,18 +1,12 @@
---REVOKE SELECT ON bloomreadertest.BooksUploadedAllTime FROM readbloomtester;
---DROP VIEW bloomreadertest.BooksUploadedAllTime;
+--REVOKE SELECT ON bloomapp.BooksUploadedAllTime FROM bloomappuser;
+--DROP VIEW bloomapp.BooksUploadedAllTime;
 
-CREATE VIEW bloomreadertest.BooksUploadedAllTime AS
-	SELECT a.id,
-          a.timestamp 
+CREATE OR REPLACE VIEW bloomapp.BooksUploadedAllTime AS
+	SELECT a.url,
+          MAX(a.timestamp) 
 	FROM   bloomapp.upload_book_success AS a
-		where
-	a.timestamp < date_trunc('month', CURRENT_DATE); 
+		where a.timestamp < date_trunc('month', CURRENT_DATE)
+		GROUP BY a.url; 
 
-GRANT SELECT ON bloomreadertest.BooksUploadedAllTime TO readbloomtester;
-select * FROM bloomreadertest.BooksUploadedAllTime;
-
-SELECT a.url,
-          a.timestamp 
-	FROM   bloomapp.upload_book_success AS a
-		where
-	a.timestamp < date_trunc('month', CURRENT_DATE); 
+GRANT SELECT ON bloomapp.BooksUploadedAllTime TO bloomappuser;
+select * FROM bloomapp.BooksUploadedAllTime;

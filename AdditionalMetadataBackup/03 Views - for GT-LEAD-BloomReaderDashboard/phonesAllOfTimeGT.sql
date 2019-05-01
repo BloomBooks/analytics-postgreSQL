@@ -1,4 +1,4 @@
-REVOKE SELECT ON bloomreader.PhonesAllOfTimeGT FROM readbloomtester;
+REVOKE SELECT ON bloomreader.PhonesAllOfTimeGT FROM bloomreaderuser;
 DROP VIEW bloomreader.PhonesAllOfTimeGT;
 
 CREATE or REPLACE VIEW bloomreader.PhonesAllOfTimeGT AS

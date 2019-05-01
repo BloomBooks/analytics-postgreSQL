@@ -1,5 +1,5 @@
-REVOKE SELECT ON bloomreader.TimePerMon_anycountry FROM readbloomtester;
-DROP VIEW bloomreader.TimePerMon_anycountry CASCADE;
+--REVOKE SELECT ON bloomreader.TimePerMon_anycountry FROM bloomreaderuser;
+--DROP VIEW bloomreader.TimePerMon_anycountry CASCADE;
 
 CREATE OR REPLACE VIEW bloomreader.TimePerMon_anycountry AS
 	SELECT a.id,
@@ -17,6 +17,4 @@ CREATE OR REPLACE VIEW bloomreader.TimePerMon_anycountry AS
     GROUP BY CAST((a.timestamp AT TIME ZONE 'AEST') AS date), a.id, b.country_name;
 
 GRANT SELECT ON bloomreader.TimePerMon_anycountry TO bloomreaderuser;
-GRANT SELECT ON bloomreader.TimePerMon_anycountry TO readbloomtester;
-GRANT SELECT ON bloomreader.TimePerMon_anycountry TO bloomgtuser;
 select * FROM bloomreader.TimePerMon_anycountry AS a where a.country = 'Guatemala';

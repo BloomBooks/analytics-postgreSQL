@@ -1,7 +1,7 @@
---REVOKE SELECT ON bloomreadertest.BooksCreatedAllTime FROM readbloomtester;
---DROP VIEW bloomreadertest.BooksCreatedAllTime ;
+--REVOKE SELECT ON bloomapp.BooksCreatedAllTime FROM bloomappuser;
+--DROP VIEW bloomapp.BooksCreatedAllTime ;
 
-CREATE VIEW bloomreadertest.BooksCreatedAllTime AS
+CREATE VIEW bloomapp.BooksCreatedAllTime AS
 	SELECT a.user_id, a.id, a.language1_iso639_code,
           a.timestamp 
 	FROM   bloomapp.create_book AS a
@@ -11,8 +11,8 @@ CREATE VIEW bloomreadertest.BooksCreatedAllTime AS
 --WHERE a.timestamp <= (date_trunc('month', current_date)) ;	
 	--	where a.timestamp < date_trunc('month', CURRENT_DATE); 
 
-GRANT SELECT ON bloomreadertest.BooksCreatedAllTime TO readbloomtester;
-select * FROM bloomreadertest.BooksCreatedAllTime;
+GRANT SELECT ON bloomapp.BooksCreatedAllTime TO bloomappuser;
+select * FROM bloomapp.BooksCreatedAllTime;
 
 select * from bloomapp.create_book AS a where (a.timestamp < date_trunc('month', CURRENT_DATE))
 	and a.timestamp >= '2019-01-01'
@@ -28,7 +28,7 @@ select * from bloomapp.create_book AS a where (a.timestamp < date_trunc('month',
 	--	where a.timestamp < date_trunc('month', CURRENT_DATE);																		
 																		
 																		
-CREATE VIEW bloomreadertest.BooksCreatedAllTime AS
+CREATE VIEW bloomapp.BooksCreatedAllTime AS
 	SELECT a.timestamp, DISTINCT a.id,
            
 	FROM   bloomapp.create_book AS a

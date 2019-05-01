@@ -1,4 +1,4 @@
-REVOKE SELECT ON bloomreader.phonesGT FROM readbloomtester;
+REVOKE SELECT ON bloomreader.phonesGT FROM bloomreaderuser;
 DROP VIEW bloomreader.phonesGT;
 
 CREATE or REPLACE VIEW bloomreader.phonesGT AS
@@ -10,7 +10,7 @@ CREATE or REPLACE VIEW bloomreader.phonesGT AS
 	WHERE a.branding_project_name = 'Juarez-Guatemala'
 	GROUP BY a.timestamp;
 
-GRANT SELECT ON bloomreader.phonesGT TO readbloomtester;
+GRANT SELECT ON bloomreader.phonesGT TO bloomreaderuser;
 select * FROM bloomreader.phonesGT;
 
 /*

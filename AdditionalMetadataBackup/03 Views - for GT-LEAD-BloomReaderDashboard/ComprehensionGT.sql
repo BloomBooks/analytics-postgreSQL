@@ -1,4 +1,4 @@
-REVOKE SELECT ON bloomreader.ComprehensionGT FROM readbloomtester;
+REVOKE SELECT ON bloomreader.ComprehensionGT FROM bloomreaderuser;
 DROP VIEW bloomreader.ComprehensionGT CASCADE;
 
 CREATE OR REPLACE VIEW bloomreader.ComprehensionGT AS
@@ -29,7 +29,6 @@ CREATE OR REPLACE VIEW bloomreader.ComprehensionGT AS
              a.question_count, a.right_first_time, a.percent_right, b.country_name, a.branding_project_name, a.timestamp  
     ORDER BY a.title;
     
-GRANT SELECT ON bloomreader.ComprehensionGT TO readbloomtester;
-GRANT SELECT ON bloomreader.ComprehensionGT TO bloomgtuser;
+GRANT SELECT ON bloomreader.ComprehensionGT TO bloomreaderuser;
 select * FROM bloomreader.ComprehensionGT AS a 
 where a.Country = 'Guatemala' ;

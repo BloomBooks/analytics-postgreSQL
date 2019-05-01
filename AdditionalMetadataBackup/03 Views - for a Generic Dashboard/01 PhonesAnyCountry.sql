@@ -1,4 +1,4 @@
-REVOKE SELECT ON bloomreader.phones_AnyCountry FROM readbloomtester;
+REVOKE SELECT ON bloomreader.phones_AnyCountry FROM bloomreaderuser;
 DROP VIEW bloomreader.phones_AnyCountry ;
 
 CREATE VIEW bloomreader.phones_AnyCountry AS
@@ -20,7 +20,6 @@ CREATE VIEW bloomreader.phones_AnyCountry AS
             a.location_uid = b.loc_uid
      GROUP BY a.context_device_id, a.timestamp, b.country_name;
 	 
-GRANT SELECT ON bloomreader.phones_AnyCountry TO readbloomtester;
 GRANT SELECT ON bloomreader.phones_AnyCountry TO bloomreaderuser;
 select * FROM bloomreader.phones_AnyCountry AS a where a.Country= 'Guatemala';
 

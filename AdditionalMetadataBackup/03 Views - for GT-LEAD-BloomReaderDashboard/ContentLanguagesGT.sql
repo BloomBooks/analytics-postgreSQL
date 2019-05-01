@@ -1,4 +1,4 @@
-REVOKE SELECT ON bloomreader.ContentLanguagesGT FROM readbloomtester;
+REVOKE SELECT ON bloomreader.ContentLanguagesGT FROM bloomreaderuser;
 DROP VIEW bloomreader.ContentLanguagesGT ;
 
 CREATE OR REPLACE VIEW bloomreader.ContentLanguagesGT AS
@@ -14,8 +14,7 @@ CREATE OR REPLACE VIEW bloomreader.ContentLanguagesGT AS
                    		WHERE ip2int(a.context_ip) BETWEEN b.ip_from and b.ip_to
 						AND b.country_name = 'Guatemala') ;
 
-GRANT SELECT ON bloomreader.ContentLanguagesGT TO readbloomtester;
-GRANT SELECT ON bloomreader.ContentLanguagesGT TO bloomgtuser;
-GRANT SELECT ON bloomreader.book_or_shelf_opened TO bloomgtuser;
-GRANT SELECT ON bloomreaderbeta.book_or_shelf_opened TO bloomgtuser;
+GRANT SELECT ON bloomreader.ContentLanguagesGT TO bloomreaderuser;
+GRANT SELECT ON bloomreader.book_or_shelf_opened TO bloomreaderuser;
+GRANT SELECT ON bloomreaderbeta.book_or_shelf_opened TO bloomreaderuser;
 select * FROM bloomreader.ContentLanguagesGT ;

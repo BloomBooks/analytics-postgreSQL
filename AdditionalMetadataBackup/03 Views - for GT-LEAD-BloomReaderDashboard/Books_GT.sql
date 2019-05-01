@@ -1,4 +1,4 @@
---REVOKE SELECT ON bloomreader.BooksGT FROM bloomgtuser;
+--REVOKE SELECT ON bloomreader.BooksGT FROM bloomreaderuser;
 --DROP VIEW bloomreader.BooksGT CASCADE;
 
 CREATE OR REPLACE VIEW bloomreader.BooksGT AS
@@ -29,7 +29,7 @@ CREATE OR REPLACE VIEW bloomreader.BooksGT AS
     WHERE a.branding_project_name= 'Juarez-Guatemala'
     ORDER BY a.title;
     
-GRANT SELECT ON bloomreader.BooksGT TO bloomgtuser;
+GRANT SELECT ON bloomreader.BooksGT TO bloomreaderuser;
 select * FROM bloomreader.BooksGT;
 select * FROM bloomreader.BooksGT AS a where a.Country NOT IN ('United States');
 select * from public.ip2loc_sm_tab;

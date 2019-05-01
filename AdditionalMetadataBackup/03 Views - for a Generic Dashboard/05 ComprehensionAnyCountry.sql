@@ -1,5 +1,5 @@
-REVOKE SELECT ON bloomreader.ComprehensionAnyCountry FROM readbloomtester;
-DROP VIEW bloomreader.ComprehensionAnyCountry CASCADE;
+--REVOKE SELECT ON bloomreader.ComprehensionAnyCountry FROM bloomreaderuser;
+--DROP VIEW bloomreader.ComprehensionAnyCountry CASCADE;
 
 CREATE OR REPLACE VIEW bloomreader.ComprehensionAnyCountry AS
 	SELECT DISTINCT a.title AS Title_Tested,
@@ -33,5 +33,4 @@ CREATE OR REPLACE VIEW bloomreader.ComprehensionAnyCountry AS
     ORDER BY a.title;
 
 GRANT SELECT ON bloomreader.ComprehensionAnyCountry TO bloomreaderuser;
-GRANT SELECT ON bloomreader.ComprehensionAnyCountry TO readbloomtester;
 select * FROM bloomreader.ComprehensionAnyCountry;
