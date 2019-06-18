@@ -15,7 +15,7 @@ To create the schema dump, I used pgAdmin.
 - Blobs => No (this shouldn't matter with Only schema set to Yes).
 - Include CREATE DATABASE statement => Yes.
 - Include DROP DATABASE statement => Yes.
-- On the General tab, click Create.
+- Click the "Backup" button.
 
 You should be able to do the same thing using the command line tool, but we were having issues with it.
 https://www.postgresql.org/docs/10/static/app-pgdump.html
