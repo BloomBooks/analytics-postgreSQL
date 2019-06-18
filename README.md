@@ -5,9 +5,10 @@ Database definition and other metadata we want to store for our postgreSQL datab
 The main purpose of this repository is to backup the bloomsegment database metadata. That is stored in bloomsegment.schema.backup.
 
 ### Creation of schema dump
-To create the schema dump, I used pgAdmin.
+To create the schema dump, I used pgAdmin 4, version 4.8:
+- Connect as silpgadmin.
 - Right click the bloomsegment database.
-- Select "Backup..."
+- Select "Backup...".
 - Select a filename.
 - For Format, choose Plain.
 - Click the Dump Options Tab.
