@@ -7,6 +7,7 @@ The main purpose of this repository is to backup the bloomsegment database metad
 ### Creation of schema dump
 To create the schema dump, I used pgAdmin.
 - Right click the bloomsegment database.
+- Select "Backup..."
 - Select a filename.
 - For Format, choose Plain.
 - Click the Dump Options Tab.
