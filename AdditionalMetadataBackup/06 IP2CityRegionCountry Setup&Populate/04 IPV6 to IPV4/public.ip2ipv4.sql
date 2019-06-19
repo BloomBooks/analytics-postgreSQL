@@ -99,6 +99,11 @@ BEGIN
 	 END IF;
 	 EXECUTE format('SELECT inet %L - %L', retip, '0.0.0.0') into retint;
      return retint;
+
+EXCEPTION
+WHEN others THEN
+	return 0;
+
 END;
 
 $BODY$;
