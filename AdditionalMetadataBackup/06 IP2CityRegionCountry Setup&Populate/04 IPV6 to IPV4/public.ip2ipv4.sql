@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION public.ip2ipv4(
 	ip character varying)
-    RETURNS bigint  --character varying  --decimal(39,0)
+    RETURNS bigint
     LANGUAGE 'plpgsql'
 
     COST 100
@@ -37,9 +37,16 @@ BEGIN
 		return retint;
   	END IF;
 	IF STRPOS(ip,'.') > 0 THEN
-	  	retip:=ip;   
-        EXECUTE format('SELECT inet %L - %L', retip, '0.0.0.0') into retint;
-		return retint;
+		IF STRPOS(ip,',') > 0 THEN
+			retip:=ip; 
+			SELECT reverse(split_part(reverse(retip), ',', 1)) into retip;
+			EXECUTE format('SELECT inet %L - %L', retip, '0.0.0.0') into retint;
+			return retint;
+		ELSE 
+	  		retip:=ip;   
+        	EXECUTE format('SELECT inet %L - %L', retip, '0.0.0.0') into retint;
+			return retint;
+		END IF;
 	ELSE
          IF STRPOS(ip,':') > 0 THEN
 	  		BEGIN
