@@ -13,9 +13,7 @@ To create the schema dump, I used pgAdmin 4, version 4.8:
 - For Format, choose Plain.
 - Click the Dump Options Tab.
 - Only schema => Yes.
-- Blobs => No (this shouldn't matter with Only schema set to Yes).
 - Include CREATE DATABASE statement => Yes.
-- Include DROP DATABASE statement => Yes.
 - Click the "Backup" button.
 
 You should be able to do the same thing using the command line tool, but we were having issues with it.

@@ -17,5 +17,5 @@ FROM bloomreader.pages_read pr
 WHERE pr.branding_project_name = 'PNG-RISE'
     AND (pr.location_uid IN
              (SELECT b.loc_uid
-              FROM countryregioncitylu b
+              FROM public.countryregioncitylu b
               WHERE b.country_name = 'Papua New Guinea'))
