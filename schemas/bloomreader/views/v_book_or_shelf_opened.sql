@@ -21,9 +21,10 @@ CREATE OR REPLACE VIEW bloomreader.v_book_or_shelf_opened AS
          l.clname AS book_language,
          c.country_name AS country,
          c.region,
-         c.city
-   FROM bloomreader.book_or_shelf_opened b
-     LEFT JOIN countryregioncitylu c ON b.location_uid = c.loc_uid
-     LEFT JOIN languagecodes l ON b.content_lang = COALESCE(l.langid2, l.langid)::text
+         c.city,
+         b.channel
+   FROM bloomreader.v_book_or_shelf_opened_raw b
+     LEFT JOIN public.countryregioncitylu c ON b.location_uid = c.loc_uid
+     LEFT JOIN public.languagecodes l ON b.content_lang = COALESCE(l.langid2, l.langid)::text
    -- omit records where phone's clock was obviously messed up 
   WHERE b."timestamp" >= '2018-01-01 00:00:00+00'::timestamp with time zone AND b."timestamp" < clock_timestamp();

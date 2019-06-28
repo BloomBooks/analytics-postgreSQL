@@ -1,11 +1,13 @@
 -- View: bloomreader.v_pages_read
+
 -- DROP VIEW bloomreader.v_pages_read ;
 
 CREATE OR REPLACE VIEW bloomreader.v_pages_read AS
+
 SELECT  pr.timestamp as time_utc,
         pr.timestamp AT TIME ZONE pr.context_timezone as time_local,
         (pr.timestamp AT TIME ZONE pr.context_timezone)::DATE as date_local,
-        pr.context_timezone, -- pr.context_ip,
+        pr.context_timezone,
         INITCAP(to_char(pr.timestamp AT TIME ZONE pr.context_timezone, 'day')) as time_local_day,
         CAST(date_part('hour', pr.timestamp AT TIME ZONE pr.context_timezone) AS INTEGER) as time_local_hour,
         pr.audio_pages as pages_read_audio,
@@ -23,13 +25,13 @@ SELECT  pr.timestamp as time_utc,
         pr.last_numbered_page_read as finished_reading_book,
         c.country_name as country,
         c.region,
-        c.city
-FROM bloomreader.pages_read pr
+        c.city,
+        pr.channel
+FROM bloomreader.v_pages_read_raw pr
 left outer join public.countryregioncitylu c on pr.location_uid = c.loc_uid
 left outer join public.languagecodes l on pr.content_lang = COALESCE(l.langid2, l.langid) -- where pr.location_uid = c.loc_uid
---     and pr.content_lang = l.langid
- -- omit records where phone's clock was obviously messed up
 
+ -- omit records where phone's clock was obviously messed up
 where pr.TIMESTAMP >= '2018-1-1'
     AND pr.TIMESTAMP < clock_timestamp();
 
