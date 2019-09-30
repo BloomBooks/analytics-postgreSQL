@@ -15,7 +15,9 @@ SELECT  timestamp,
         branding_project_name,
         content_lang,
         location_uid,
-        'release' AS channel
+        'release' AS channel,
+        context_device_manufacturer,
+        context_device_model
 FROM    bloomreader.book_or_shelf_opened
 UNION
 SELECT  timestamp,
@@ -29,5 +31,7 @@ SELECT  timestamp,
         branding_project_name,
         content_lang,
         location_uid,
-        'beta' AS channel
+        'beta' AS channel,
+        context_device_manufacturer,
+        context_device_model
 FROM    bloomreaderbeta.book_or_shelf_opened;

@@ -22,7 +22,9 @@ CREATE OR REPLACE VIEW bloomreader.v_book_or_shelf_opened AS
          c.country_name AS country,
          c.region,
          c.city,
-         b.channel
+         b.channel,
+         context_device_manufacturer AS device_manufacturer,
+         context_device_model AS device_model
    FROM bloomreader.v_book_or_shelf_opened_raw b
      LEFT JOIN public.countryregioncitylu c ON b.location_uid = c.loc_uid
      LEFT JOIN public.languagecodes l ON b.content_lang = COALESCE(l.langid2, l.langid)::text
