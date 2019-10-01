@@ -1,9 +1,9 @@
 -- Trigger: insert_country_row
 
--- DROP TRIGGER insert_country_row ON bloomreadertest.application_installed;
+-- DROP TRIGGER insert_country_row ON bloomreader.application_opened;
 
 CREATE TRIGGER insert_country_row
     BEFORE INSERT
-    ON bloomreadertest.application_installed
+    ON bloomreader.application_opened
     FOR EACH ROW
     EXECUTE PROCEDURE public.insert_context_ip_country_bloom_fctn();
