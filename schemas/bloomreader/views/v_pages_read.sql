@@ -18,7 +18,13 @@ SELECT  pr.timestamp as time_utc,
         pr.context_traits_user_id as device_project_hardware_code, -- comes from deviceId.json, if found on the device
         pr.context_major_minor as bloom_reader_version,
         pr.title as book_title,
-        pr.branding_project_name as book_branding,
+        -- clean up old historical data; current BR deploys with 'Sample-Book'
+         CASE
+          when pr.title = 'The Moon and the Cap' and pr.branding_project_name = 'SIL-International' then 'Sample-Book'
+          when pr.title = 'The Moon and the Cap' and pr.branding_project_name = 'Default' then 'Sample-Book'
+          when pr.title = 'The Moon and the Cap' and pr.branding_project_name is NULL then 'Sample-Book'
+          else pr.branding_project_name
+         END AS book_branding,
         pr.content_lang as book_language_code,
         l.clname as book_language,
         pr.total_numbered_pages as book_pages,
