@@ -15,7 +15,13 @@ CREATE OR REPLACE VIEW bloomreader.v_book_or_shelf_opened AS
          b.context_traits_user_id as device_project_hardware_code, -- comes from deviceId.json, if found on the device
          b.context_major_minor AS bloom_reader_version,
          b.title AS book_title,
-         b.branding_project_name AS book_branding,
+         -- clean up old historical data; current BR deploys with 'Sample-Book'
+         CASE
+          when b.title = 'The Moon and the Cap' and b.branding_project_name = 'SIL-International' then 'Sample-Book'
+          when b.title = 'The Moon and the Cap' and b.branding_project_name = 'Default' then 'Sample-Book'
+          when b.title = 'The Moon and the Cap' and b.branding_project_name is NULL then 'Sample-Book'
+          else b.branding_project_name
+         END AS book_branding,
          b.content_lang AS book_language_code,
          b.question_count AS question_count,
          l.clname AS book_language,
