@@ -18,9 +18,11 @@ SELECT  timestamp,
         branding_project_name,
         content_lang,
         location_uid,
-        'release' as channel
+        'release' as channel,
+        video_pages_played,
+        features
 FROM    bloomreader.pages_read
-UNION
+UNION ALL
 SELECT  timestamp,
         context_timezone,
         audio_pages,
@@ -35,6 +37,8 @@ SELECT  timestamp,
         branding_project_name,
         content_lang,
         location_uid,
-        'beta' as channel
+        'beta' as channel,
+        video_pages_played,
+        features
 FROM    bloomreaderbeta.pages_read;
 

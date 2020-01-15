@@ -26,16 +26,23 @@ SELECT  pr.timestamp as time_utc,
           else pr.branding_project_name
          END AS book_branding,
         pr.content_lang as book_language_code,
-        l.clname as book_language,
+         -- Including this in the view makes it very slow when
+         -- filtering on country and branding. So we punted and 
+         -- "removed" it, but since the view is in use by other
+         -- views, it was much easier to create this dummy value.
+        --l.clname as book_language,
+        CHARACTER VARYING(50) 'error: language name lookup failed' as book_language,
         pr.total_numbered_pages as book_pages,
         pr.last_numbered_page_read as finished_reading_book,
         c.country_name as country,
         c.region,
         c.city,
-        pr.channel
+        pr.channel,
+        pr.video_pages_played,
+        pr.features
 FROM bloomreader.v_pages_read_raw pr
 left outer join public.countryregioncitylu c on pr.location_uid = c.loc_uid
-left outer join public.languagecodes l on pr.content_lang = COALESCE(l.langid2, l.langid) -- where pr.location_uid = c.loc_uid
+--left outer join public.languagecodes l on pr.content_lang = COALESCE(l.langid2, l.langid) -- where pr.location_uid = c.loc_uid
 
  -- omit records where phone's clock was obviously messed up
 where pr.TIMESTAMP >= '2018-1-1'
