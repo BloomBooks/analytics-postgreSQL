@@ -22,17 +22,23 @@ CREATE OR REPLACE VIEW bloomreader.v_book_or_shelf_opened AS
           when b.title = 'The Moon and the Cap' and b.branding_project_name is NULL then 'Sample-Book'
           else b.branding_project_name
          END AS book_branding,
-         b.content_lang AS book_language_code,
+         b.content_lang AS book_language_code,         
          b.question_count AS question_count,
-         l.clname AS book_language,
+         -- Including this in the view makes it very slow when
+         -- filtering on country and branding. So we punted and 
+         -- "removed" it, but since the view is in use by other
+         -- views, it was much easier to create this dummy value.
+         --l.clname AS book_language,
+         CHARACTER VARYING(50) 'error: language name lookup failed' as book_language,
          c.country_name AS country,
          c.region,
          c.city,
          b.channel,
          context_device_manufacturer AS device_manufacturer,
-         context_device_model AS device_model
+         context_device_model AS device_model,
+         features
    FROM bloomreader.v_book_or_shelf_opened_raw b
      LEFT JOIN public.countryregioncitylu c ON b.location_uid = c.loc_uid
-     LEFT JOIN public.languagecodes l ON b.content_lang = COALESCE(l.langid2, l.langid)::text
+     --LEFT JOIN public.languagecodes l ON b.content_lang = COALESCE(l.langid2, l.langid)::text
    -- omit records where phone's clock was obviously messed up 
   WHERE b."timestamp" >= '2018-01-01 00:00:00+00'::timestamp with time zone AND b."timestamp" < clock_timestamp();
