@@ -39,7 +39,8 @@ SELECT  pr.timestamp as time_utc,
         c.city,
         pr.channel,
         pr.video_pages_played,
-        pr.features
+        pr.features,
+        pr.book_instance_id
 FROM bloomreader.v_pages_read_raw pr
 left outer join public.countryregioncitylu c on pr.location_uid = c.loc_uid
 --left outer join public.languagecodes l on pr.content_lang = COALESCE(l.langid2, l.langid) -- where pr.location_uid = c.loc_uid

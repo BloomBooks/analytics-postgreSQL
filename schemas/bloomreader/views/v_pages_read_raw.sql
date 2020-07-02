@@ -20,7 +20,8 @@ SELECT  timestamp,
         location_uid,
         'release' as channel,
         video_pages_played,
-        features
+        features,
+        book_instance_id
 FROM    bloomreader.pages_read
 UNION ALL
 SELECT  timestamp,
@@ -39,6 +40,7 @@ SELECT  timestamp,
         location_uid,
         'beta' as channel,
         video_pages_played,
-        features
+        features,
+        book_instance_id
 FROM    bloomreaderbeta.pages_read;
 

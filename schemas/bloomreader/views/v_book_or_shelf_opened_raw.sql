@@ -18,7 +18,8 @@ SELECT  timestamp,
         'release' AS channel,
         context_device_manufacturer,
         context_device_model,
-        features
+        features,
+        book_instance_id
 FROM    bloomreader.book_or_shelf_opened
 UNION ALL
 SELECT  timestamp,
@@ -35,5 +36,6 @@ SELECT  timestamp,
         'beta' AS channel,
         context_device_manufacturer,
         context_device_model,
-        features
+        features,
+        book_instance_id
 FROM    bloomreaderbeta.book_or_shelf_opened;
