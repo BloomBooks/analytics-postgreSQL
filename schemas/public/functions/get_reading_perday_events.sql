@@ -1,7 +1,11 @@
--- DROP FUNCTION public.get_books_stats(DATE, DATE);
+-- DROP FUNCTION public.get_reading_perday_events(DATE, DATE);
 
-CREATE OR REPLACE FUNCTION public.get_books_stats(
-	p_from DATE DEFAULT DATE(20000101::TEXT), p_to DATE DEFAULT DATE(30000101::TEXT))
+CREATE OR REPLACE FUNCTION public.get_reading_perday_events(
+        p_useBookIds BOOLEAN,
+	p_from DATE DEFAULT DATE(20000101::TEXT), 
+        p_to DATE DEFAULT DATE(30000101::TEXT),
+        p_branding TEXT DEFAULT NULL, 
+        p_country TEXT DEFAULT NULL)
     RETURNS TABLE (dateLocal DATE, bookBranding VARCHAR, country VARCHAR, bloomReaderSessions INT)
     -- RETURNS TABLE (bookId TEXT, bookInstanceId TEXT, bookTitle TEXT, dateLocal DATE)
     --timeOfBloomReaderOpen
@@ -11,6 +15,9 @@ AS $$
 DECLARE
 
 BEGIN
+
+IF p_useBookIds
+THEN
     RETURN QUERY
     
     -- SELECT  b.book_id,
@@ -66,6 +73,22 @@ BEGIN
     --         bookTitle,
     --         date_local
     -- ;
+ELSE
+        RETURN QUERY    
+
+        SELECT  r.time_local::date as date_local,
+                CAST(r.book_branding AS VARCHAR),
+                CAST(r.country AS VARCHAR),
+                CAST(count(*) AS INT) as number_sessions
+        FROM    bloomreader.v_pages_read r
+        WHERE   (p_branding IS NULL OR r.book_branding = p_branding) AND
+                (p_country IS NULL OR r.country = p_country) AND        
+                date_local >= p_from AND 
+                date_local <= p_to
+        group by r.time_local::date,
+                r.book_branding,
+                r.country;
+END IF;
 END; $$
 
 
