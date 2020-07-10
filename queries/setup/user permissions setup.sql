@@ -24,6 +24,9 @@ GRANT SELECT ON TABLES TO readbloom;
 ---------------
 GRANT CONNECT ON DATABASE bloomsegment to stats;
 GRANT USAGE ON SCHEMA public TO stats;
+GRANT SELECT ON TABLE common.mv_reading_perbook_events TO stats;
+GRANT SELECT ON TABLE common.mv_reading_perday_events TO stats;
+GRANT SELECT ON TABLE common.mv_reading_perday_events_by_branding_and_country TO stats;
 GRANT SELECT ON TABLE bloomlibrary_org.v_download_book to stats;
 GRANT SELECT ON TABLE bloomlibrary_org.v_book_detail to stats;
 GRANT USAGE ON SCHEMA bloomreader TO stats;
