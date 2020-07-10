@@ -35,8 +35,8 @@ THEN
         WHERE   c.book_instance_id = b.book_instance_id AND
                 date_local >= p_from AND 
                 date_local <= p_to
-        group by book_instance_id,
-                book_branding;
+        group by c.book_instance_id,
+                c.book_branding;
 
 ELSE
         RETURN QUERY    
