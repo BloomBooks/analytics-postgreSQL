@@ -1,15 +1,12 @@
--- DROP FUNCTION public.get_reading_perday_events(DATE, DATE);
+-- DROP FUNCTION common.get_reading_perday_events(BOOLEAN, DATE, DATE, TEXT, TEXT);
 
-CREATE OR REPLACE FUNCTION public.get_reading_perday_events(
+CREATE OR REPLACE FUNCTION common.get_reading_perday_events(
         p_useBookIds BOOLEAN,
 	p_from DATE DEFAULT DATE(20000101::TEXT), 
         p_to DATE DEFAULT DATE(30000101::TEXT),
         p_branding TEXT DEFAULT NULL, 
         p_country TEXT DEFAULT NULL)
-    RETURNS TABLE (dateLocal DATE, bookBranding VARCHAR, country VARCHAR, bloomReaderSessions INT)
-    -- RETURNS TABLE (bookId TEXT, bookInstanceId TEXT, bookTitle TEXT, dateLocal DATE)
-    --timeOfBloomReaderOpen
-    --, totalReads INT, totalDownloads INT, bloomReaderReads INT, deviceCount INT, shellDownloads INT, libraryViews INT)
+    RETURNS TABLE (dateLocal DATE, bookBranding TEXT, country VARCHAR, bloomReaderSessions BIGINT)
 AS $$
 
 DECLARE
@@ -48,18 +45,18 @@ THEN
     -- GROUP BY date_local
     -- ;
 
-    select  r.date_local,
-            CAST(r.book_branding AS VARCHAR),
-            CAST(r.country AS VARCHAR),
-            CAST(count(*) AS INT) as number_sessions
-    from    bloomreader.v_pages_read r,
+    select  mv.date_local,
+            mv.book_branding,
+            mv.country,
+            CAST(sum(mv.number_sessions) AS BIGINT) as number_sessions
+    from    common.mv_reading_perday_events mv,
             temp_book_ids b
-    WHERE   r.book_instance_id = b.book_instance_id AND
-            r.date_local >= p_from AND 
-            r.date_local <= p_to
-    group by r.date_local,
-            r.book_branding,
-            r.country;
+    WHERE   mv.book_instance_id = b.book_instance_id AND
+            mv.date_local >= p_from AND 
+            mv.date_local <= p_to
+    group by mv.date_local,
+            mv.book_branding,
+            mv.country;
 
     -- SELECT  date_local,
     --         book_branding,
@@ -76,18 +73,16 @@ THEN
 ELSE
         RETURN QUERY    
 
-        SELECT  r.time_local::date as date_local,
-                CAST(r.book_branding AS VARCHAR),
-                CAST(r.country AS VARCHAR),
-                CAST(count(*) AS INT) as number_sessions
-        FROM    bloomreader.v_pages_read r
-        WHERE   (p_branding IS NULL OR r.book_branding = p_branding) AND
-                (p_country IS NULL OR r.country = p_country) AND        
-                date_local >= p_from AND 
-                date_local <= p_to
-        group by r.time_local::date,
-                r.book_branding,
-                r.country;
+        SELECT  mv.date_local,
+                mv.book_branding,
+                mv.country,
+                mv.number_sessions
+        FROM    common.mv_reading_perday_events_by_branding_and_country mv
+        WHERE   (p_branding IS NULL OR mv.book_branding = p_branding) AND
+                (p_country IS NULL OR mv.country = p_country) AND        
+                mv.date_local >= p_from AND 
+                mv.date_local <= p_to
+        ;
 END IF;
 END; $$
 
