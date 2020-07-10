@@ -1,58 +1,44 @@
--- DROP FUNCTION common.get_reading_perbook_events(BOOLEAN, DATE, DATE, TEXT, TEXT);
+-- DROP FUNCTION common.get_reading_perbook_events(boolean, date, date, text, text);
 
 CREATE OR REPLACE FUNCTION common.get_reading_perbook_events(
-        p_useBookIds BOOLEAN,
+    p_useBookIds BOOLEAN,
 	p_from DATE DEFAULT DATE(20000101::TEXT), 
-        p_to DATE DEFAULT DATE(30000101::TEXT),
-        p_branding TEXT DEFAULT NULL, 
-        p_country TEXT DEFAULT NULL)
-    RETURNS TABLE (
-            bookTitle TEXT, 
-            bookBranding TEXT, 
-            language TEXT, 
-            started BIGINT, 
-            finished BIGINT)
-
+    p_to DATE DEFAULT DATE(30000101::TEXT),
+    p_branding TEXT DEFAULT NULL, 
+    p_country TEXT DEFAULT NULL)
+RETURNS TABLE (
+        bookInstanceId TEXT,
+        bookTitle TEXT, 
+        bookBranding TEXT, 
+        language TEXT, 
+        started BIGINT, 
+        finished BIGINT,
+        numQuestionsInBook BIGINT,
+        numQuizzesTaken BIGINT,
+        meanPctQuestionsCorrect NUMERIC,
+        medianPctQuestionsCorrect NUMERIC)
 AS $$
 
 DECLARE
 
 BEGIN
+    RETURN QUERY    
 
-IF p_useBookIds
-THEN
-        RETURN QUERY    
+    SELECT
+            reads.*,
+            comp.numQuestionsInBook,
+            comp.numQuizzesTaken,
+            comp.meanPctCorrect,
+            comp.medianPctCorrect
+    FROM common.get_reading_perbook_base_events(p_useBookIds, p_from, p_to, p_branding, p_country) reads
 
-        SELECT  max(book_title),
-                max(mv.book_branding),
-                max(book_language_code),
-                CAST(sum(mv.started) AS BIGINT), 
-                CAST(sum(mv.finished) AS BIGINT)
-        FROM    common.mv_reading_perbook_events mv,
-                temp_book_ids b
-        WHERE   mv.book_instance_id = b.book_instance_id AND
-                mv.date_local >= p_from AND 
-                mv.date_local <= p_to
-        GROUP BY mv.book_instance_id
-        ;
-
-ELSE
-        RETURN QUERY    
-
-        SELECT  max(book_title),
-                max(mv.book_branding),
-                max(book_language_code),
-                CAST(sum(mv.started) AS BIGINT), 
-                CAST(sum(mv.finished) AS BIGINT)
-        FROM    common.mv_reading_perbook_events mv
-        WHERE   (p_branding IS NULL OR mv.book_branding = p_branding) AND
-                (p_country IS NULL OR mv.country = p_country) AND        
-                mv.date_local >= p_from AND 
-                mv.date_local <= p_to
-        GROUP BY mv.book_instance_id
-        ;
-END IF;
+    -- Assumption: All comprehension events are also supposed to have a pages_read event,
+    --             so we assume that it's not possible to have a comprehension event w/o it.
+    --             This allows us to do a LEFT outer join instead of FULL (and not need to handle the left side's title/branding being possibly null)
+    LEFT OUTER JOIN common.get_reading_perbook_comprehension_events(p_useBookIds, p_from, p_to, p_branding, p_country) comp
+            ON reads.bookInstanceId = comp.bookInstanceId
+    ;
 END; $$
 
-
 LANGUAGE 'plpgsql';
+
