@@ -26,7 +26,7 @@ THEN
                 COUNT(DISTINCT r.device_unique_id) AS deviceCount,
                 COUNT(DISTINCT r.book_language_code) AS languageCount,
                 COUNT(*) AS bloomReaderReadCount
-        FROM    bloomreader.v_pages_read r,
+        FROM    common.mv_pages_read r,
                 temp_book_ids b
         WHERE   r.book_instance_id = b.book_instance_id AND
                 r.date_local >= p_from AND 
@@ -41,7 +41,7 @@ ELSE
                 COUNT(DISTINCT device_unique_id) AS deviceCount,
                 COUNT(DISTINCT book_language_code) AS languageCount,
                 COUNT(*) AS bloomReaderReadCount
-        FROM    bloomreader.v_pages_read r
+        FROM    common.mv_pages_read r
         WHERE   r.book_branding = p_branding AND
                 r.country = p_country AND        
                 r.date_local >= p_from AND 
