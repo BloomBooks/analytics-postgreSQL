@@ -1,5 +1,0 @@
-REFRESH MATERIALIZED VIEW common.mv_pages_read;
-REFRESH MATERIALIZED VIEW common.mv_comprehension;
-REFRESH MATERIALIZED VIEW common.mv_reading_perbook_events;
-REFRESH MATERIALIZED VIEW common.mv_reading_perday_events;
-REFRESH MATERIALIZED VIEW common.mv_reading_perday_events_by_branding_and_country;

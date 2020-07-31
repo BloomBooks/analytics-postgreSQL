@@ -1,6 +1,6 @@
--- DROP FUNCTION public.get_book_stats(VARCHAR, VARCHAR, DATE, DATE);
+-- DROP FUNCTION common.get_book_stats(VARCHAR, VARCHAR, DATE, DATE);
 
-CREATE OR REPLACE FUNCTION public.get_book_stats(
+CREATE OR REPLACE FUNCTION common.get_book_stats(
 	p_bookId VARCHAR, p_bookInstanceId VARCHAR, p_from DATE DEFAULT DATE(20000101::TEXT), p_to DATE DEFAULT DATE(30000101::TEXT))
     RETURNS TABLE (bookId VARCHAR, totalReads INT, bloomReaderReads INT, bloomLibraryReads INT, totalDownloads INT, shellDownloads INT, libraryViews INT, deviceCount INT)
 AS $$
@@ -12,17 +12,17 @@ DECLARE
 
 BEGIN
         SELECT  count(*),
-                count(distinct o.device_unique_id) 
+                count(distinct pr.device_unique_id) 
         INTO    bloomReaderReads, 
                 deviceCount
-        FROM    bloomreader.v_book_or_shelf_opened o
-        WHERE   o.book_instance_id = p_bookInstanceId --AND
-                --o.time_utc BETWEEN p_from AND (p_to + interval '1 day')
+        FROM    common.mv_pages_read pr
+        WHERE   pr.book_instance_id = p_bookInstanceId --AND
+                --pr.time_utc BETWEEN p_from AND (p_to + interval '1 day')
         ;
 
         SELECT  count(*)
                 INTO libraryViews
-        FROM    bloomlibrary_test.v_book_detail bd
+        FROM    common.mv_book_detail bd
         WHERE   bd.book_id = p_bookId --AND
                 --bd.timestamp BETWEEN p_from AND (p_to + interval '1 day')
         ;
@@ -31,7 +31,7 @@ BEGIN
         CREATE TEMP TABLE downloads AS
         SELECT  d.event_type, 
                 count(d.event_type) AS cnt
-        FROM    bloomlibrary_test.v_download_book d
+        FROM    common.mv_download_book d
         WHERE   d.book_id = p_bookId --AND
                 --d.timestamp BETWEEN p_from AND (p_to + interval '1 day')
         GROUP BY d.event_type;
@@ -66,7 +66,7 @@ BEGIN
 --     WITH    downloads AS 
 --             (SELECT d.event_type, 
 --                     count(d.event_type) AS cnt
---             FROM    bloomlibrary_test.v_download_book d
+--             FROM    bloomlibrary_org.v_download_book d
 --             WHERE   d.book_id = p_bookId --AND
 --                     --d.timestamp BETWEEN p_from AND (p_to + interval '1 day')
 --             GROUP BY d.event_type
@@ -80,7 +80,7 @@ BEGIN
 --             ),
 --             bookDetailViews AS
 --             (SELECT count(*) AS cnt
---             FROM    bloomlibrary_test.v_book_detail bd
+--             FROM    bloomlibrary_org.v_book_detail bd
 --             WHERE   bd.book_id = p_bookId --AND
 --                     --bd.timestamp BETWEEN p_from AND (p_to + interval '1 day')
 --             )

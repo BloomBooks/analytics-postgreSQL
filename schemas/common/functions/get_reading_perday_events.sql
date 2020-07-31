@@ -32,7 +32,7 @@ THEN
     --         DATE_TRUNC(d.timestamp) AS date_local
     --         --d.timestamp
     -- FROM    temp_book_ids i,
-    --         bloomlibrary_test.v_download_book d
+    --         bloomlibrary_org.v_download_book d
     -- WHERE   i.book_id = d.book_id
     -- GROUP BY date_local
     -- ;
@@ -40,7 +40,7 @@ THEN
     -- SELECT  count(i.book_id),
     --         d.timestamp::date AS date_local
     -- FROM    temp_book_ids i,
-    --         bloomlibrary_test.v_download_book d
+    --         bloomlibrary_org.v_download_book d
     -- WHERE   i.book_id = d.book_id
     -- GROUP BY date_local
     -- ;

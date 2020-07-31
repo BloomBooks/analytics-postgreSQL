@@ -29,6 +29,8 @@ GRANT SELECT ON TABLE common.mv_reading_perday_events TO stats;
 GRANT SELECT ON TABLE common.mv_reading_perday_events_by_branding_and_country TO stats;
 GRANT SELECT ON TABLE common.mv_comprehension TO stats;
 GRANT SELECT ON TABLE common.mv_pages_read TO stats;
+GRANT SELECT ON TABLE common.mv_book_detail TO stats;
+GRANT SELECT ON TABLE common.mv_download_book TO stats;
 GRANT SELECT ON TABLE bloomlibrary_org.v_download_book to stats;
 GRANT SELECT ON TABLE bloomlibrary_org.v_book_detail to stats;
 GRANT USAGE ON SCHEMA bloomreader TO stats;

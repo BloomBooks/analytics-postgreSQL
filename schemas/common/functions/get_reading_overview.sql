@@ -8,9 +8,28 @@ CREATE OR REPLACE FUNCTION common.get_reading_overview(
         p_country TEXT DEFAULT NULL)
     RETURNS TABLE (
         bookCount BIGINT, 
-        deviceCount BIGINT, 
         languageCount BIGINT,
-        bloomReaderReadCount BIGINT)
+
+        deviceMobileCount BIGINT, 
+        -- deviceCount is the old name for deviceMobileCount
+        -- but we have to leave it here until blorg2 gets changed and deployed
+        deviceCount BIGINT, 
+        -- Currently always 0 because we don't report from the PC app yet.
+        devicePCCount BIGINT, 
+        
+        downloadsEpubCount BIGINT,
+        downloadsBloomPubCount BIGINT,
+        downloadsPDFCount BIGINT,
+        downloadsShellbooksCount BIGINT,
+        
+        readsBloomReaderCount BIGINT,
+        -- bloomReaderReadCount is the old name for readsBloomReaderCount
+        -- but we have to leave it here until blorg2 gets changed and deployed
+        bloomReaderReadCount BIGINT,
+        readsWebCount BIGINT,
+        -- Currently always 0 because we don't report from apps yet.
+        readsAppsCount BIGINT
+        )
 AS $$
 
 DECLARE
@@ -21,11 +40,40 @@ IF p_useBookIds
 THEN
     RETURN QUERY
 
-        -- This works on BR and BR Beta, but not BLORG.
+        WITH    downloads AS
+                (SELECT d.event_type, 
+                        count(d.event_type) AS cnt
+                FROM    common.mv_download_book d,
+                        temp_book_ids b
+                WHERE   d.book_id = b.book_id AND
+                        -- we would normally use date_local,
+                        -- but the web events don't include timezone
+                        d.time_utc >= p_from AND 
+                        d.time_utc <= p_to
+                GROUP BY d.event_type)
         SELECT  COUNT(DISTINCT r.book_instance_id) AS bookCount,
-                COUNT(DISTINCT r.device_unique_id) AS deviceCount,
                 COUNT(DISTINCT r.book_language_code) AS languageCount,
-                COUNT(*) AS bloomReaderReadCount
+                COUNT(DISTINCT r.device_unique_id) AS deviceMobileCount,
+                COUNT(DISTINCT r.device_unique_id) AS deviceCount,
+                CAST(0 AS BIGINT) AS devicePCCount,
+                COALESCE((SELECT cnt
+                FROM    downloads
+                WHERE   event_type = 'epub'), 0) AS downloadsEpubCount,
+                COALESCE((SELECT cnt
+                FROM    downloads
+                WHERE   event_type = 'bloompub'), 0) AS downloadsBloomPubCount,
+                COALESCE((SELECT cnt
+                FROM    downloads
+                WHERE   event_type = 'pdf'), 0) AS downloadsPdfCount,
+                COALESCE((SELECT cnt
+                FROM    downloads
+                WHERE   event_type = 'shell'), 0) AS downloadsShellbooksCount,
+                COUNT(*) AS readsBloomReaderCount,
+                COUNT(*) AS bloomReaderReadCount,
+                COALESCE((SELECT cnt
+                FROM    downloads
+                WHERE   event_type = 'read'), 0) AS readsWebCount,
+                CAST(0 AS BIGINT) AS readsAppsCount
         FROM    common.mv_pages_read r,
                 temp_book_ids b
         WHERE   r.book_instance_id = b.book_instance_id AND
@@ -36,14 +84,44 @@ THEN
 ELSE
         RETURN QUERY    
 
-        -- This works on BR and BR Beta, but not BLORG.
-        SELECT  COUNT(DISTINCT book_instance_id) AS bookCount,
-                COUNT(DISTINCT device_unique_id) AS deviceCount,
-                COUNT(DISTINCT book_language_code) AS languageCount,
-                COUNT(*) AS bloomReaderReadCount
+
+        WITH    downloads AS
+                (SELECT d.event_type, 
+                        count(d.event_type) AS cnt
+                FROM    common.mv_download_book d
+                WHERE   (p_branding IS NULL OR d.book_branding = p_branding) AND
+                        (p_country IS NULL OR d.country = p_country) AND
+                        -- we would normally use date_local,
+                        -- but the web events don't include timezone
+                        d.time_utc >= p_from AND 
+                        d.time_utc <= p_to
+                GROUP BY d.event_type)
+        SELECT  COUNT(DISTINCT r.book_instance_id) AS bookCount,
+                COUNT(DISTINCT r.book_language_code) AS languageCount,
+                COUNT(DISTINCT r.device_unique_id) AS deviceMobileCount,
+                COUNT(DISTINCT r.device_unique_id) AS deviceCount,
+                CAST(0 AS BIGINT) AS devicePCCount,
+                COALESCE((SELECT cnt
+                FROM    downloads
+                WHERE   event_type = 'epub'), 0) AS downloadsEpubCount,
+                COALESCE((SELECT cnt
+                FROM    downloads
+                WHERE   event_type = 'bloomPub'), 0) AS downloadsBloomPubCount,
+                COALESCE((SELECT cnt
+                FROM    downloads
+                WHERE   event_type = 'pdf'), 0) AS downloadsPdfCount,
+                COALESCE((SELECT cnt
+                FROM    downloads
+                WHERE   event_type = 'shell'), 0) AS downloadsShellbooksCount,
+                COUNT(*) AS readsBloomReaderCount,
+                COUNT(*) AS bloomReaderReadCount,
+                COALESCE((SELECT cnt
+                FROM    downloads
+                WHERE   event_type = 'read'), 0) AS readsWebCount,
+                CAST(0 AS BIGINT) AS readsAppsCount
         FROM    common.mv_pages_read r
-        WHERE   r.book_branding = p_branding AND
-                r.country = p_country AND        
+        WHERE   (p_branding IS NULL OR r.book_branding = p_branding) AND
+                (p_country IS NULL OR r.country = p_country) AND
                 r.date_local >= p_from AND 
                 r.date_local <= p_to
         ;
