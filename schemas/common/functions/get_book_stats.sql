@@ -42,7 +42,7 @@ BEGIN
         SELECT  cnt
         INTO    shellDownloads
         FROM    downloads 
-        WHERE   event_type = 'shell' OR event_type IS NULL;
+        WHERE   event_type = 'shell';
         SELECT  cnt
         INTO    totalDownloads
         FROM    downloads 

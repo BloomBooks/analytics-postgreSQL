@@ -17,7 +17,8 @@ CREATE OR REPLACE VIEW bloomlibrary_org.v_download_book AS
             CAST(NULL AS TEXT) AS book_branding,
             c.country_name as country,
             c.region,
-            c.city
+            c.city,
+            topic
     FROM    bloomlibrary_org.download_book d
     left outer join public.countryregioncitylu c on d.location_uid = c.loc_uid
 ;

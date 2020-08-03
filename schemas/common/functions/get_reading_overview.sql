@@ -9,6 +9,7 @@ CREATE OR REPLACE FUNCTION common.get_reading_overview(
     RETURNS TABLE (
         bookCount BIGINT, 
         languageCount BIGINT,
+        topicCount BIGINT,
 
         deviceMobileCount BIGINT, 
         -- deviceCount is the old name for deviceMobileCount
@@ -50,9 +51,38 @@ THEN
                         -- but the web events don't include timezone
                         d.time_utc >= p_from AND 
                         d.time_utc <= p_to
-                GROUP BY d.event_type)
-        SELECT  COUNT(DISTINCT r.book_instance_id) AS bookCount,
+                GROUP BY d.event_type),
+                downloadDistinctIds AS
+                (SELECT DISTINCT d.book_instance_id
+                FROM    common.mv_download_book d,
+                        temp_book_ids b
+                WHERE   d.book_id = b.book_id AND
+                        -- we would normally use date_local,
+                        -- but the web events don't include timezone
+                        d.time_utc >= p_from AND 
+                        d.time_utc <= p_to),
+                bloomReaderReads AS
+                (SELECT r.book_instance_id,
+                        r.device_unique_id,
+                        r.book_language_code
+                FROM    common.mv_pages_read r,
+                        temp_book_ids b
+                WHERE   r.book_instance_id = b.book_instance_id AND
+                        r.date_local >= p_from AND 
+                        r.date_local <= p_to)
+        SELECT  (SELECT COUNT(DISTINCT u.book_instance_id)
+                FROM    (SELECT downloadDistinctIds.book_instance_id from downloadDistinctIds
+                        UNION ALL
+                        SELECT DISTINCT bloomReaderReads.book_instance_id from bloomReaderReads) u) AS bookCount,
                 COUNT(DISTINCT r.book_language_code) AS languageCount,
+                (SELECT COUNT(DISTINCT topic)
+                FROM    common.mv_download_book d,
+                        temp_book_ids b
+                WHERE   d.book_id = b.book_id AND
+                        -- we would normally use date_local,
+                        -- but the web events don't include timezone
+                        d.time_utc >= p_from AND 
+                        d.time_utc <= p_to) AS topicCount,
                 COUNT(DISTINCT r.device_unique_id) AS deviceMobileCount,
                 COUNT(DISTINCT r.device_unique_id) AS deviceCount,
                 CAST(0 AS BIGINT) AS devicePCCount,
@@ -74,11 +104,7 @@ THEN
                 FROM    downloads
                 WHERE   event_type = 'read'), 0) AS readsWebCount,
                 CAST(0 AS BIGINT) AS readsAppsCount
-        FROM    common.mv_pages_read r,
-                temp_book_ids b
-        WHERE   r.book_instance_id = b.book_instance_id AND
-                r.date_local >= p_from AND 
-                r.date_local <= p_to
+        FROM    bloomReaderReads r
         ;
 
 ELSE
@@ -95,9 +121,38 @@ ELSE
                         -- but the web events don't include timezone
                         d.time_utc >= p_from AND 
                         d.time_utc <= p_to
-                GROUP BY d.event_type)
-        SELECT  COUNT(DISTINCT r.book_instance_id) AS bookCount,
+                GROUP BY d.event_type),
+                downloadDistinctIds AS
+                (SELECT DISTINCT d.book_instance_id
+                FROM    common.mv_download_book d
+                WHERE   (p_branding IS NULL OR d.book_branding = p_branding) AND
+                        (p_country IS NULL OR d.country = p_country) AND
+                        -- we would normally use date_local,
+                        -- but the web events don't include timezone
+                        d.time_utc >= p_from AND 
+                        d.time_utc <= p_to),
+                bloomReaderReads AS
+                (SELECT r.book_instance_id,
+                        r.device_unique_id,
+                        r.book_language_code
+                FROM    common.mv_pages_read r
+                WHERE   (p_branding IS NULL OR r.book_branding = p_branding) AND
+                        (p_country IS NULL OR r.country = p_country) AND
+                        r.date_local >= p_from AND 
+                        r.date_local <= p_to)
+        SELECT  (SELECT COUNT(DISTINCT u.book_instance_id)
+                FROM    (SELECT downloadDistinctIds.book_instance_id from downloadDistinctIds
+                        UNION ALL
+                        SELECT DISTINCT bloomReaderReads.book_instance_id from bloomReaderReads) u) AS bookCount,
                 COUNT(DISTINCT r.book_language_code) AS languageCount,
+                (SELECT COUNT(DISTINCT topic)
+                FROM    common.mv_download_book d
+                WHERE   (p_branding IS NULL OR d.book_branding = p_branding) AND
+                        (p_country IS NULL OR d.country = p_country) AND
+                        -- we would normally use date_local,
+                        -- but the web events don't include timezone
+                        d.time_utc >= p_from AND 
+                        d.time_utc <= p_to) AS topicCount,
                 COUNT(DISTINCT r.device_unique_id) AS deviceMobileCount,
                 COUNT(DISTINCT r.device_unique_id) AS deviceCount,
                 CAST(0 AS BIGINT) AS devicePCCount,
@@ -119,11 +174,7 @@ ELSE
                 FROM    downloads
                 WHERE   event_type = 'read'), 0) AS readsWebCount,
                 CAST(0 AS BIGINT) AS readsAppsCount
-        FROM    common.mv_pages_read r
-        WHERE   (p_branding IS NULL OR r.book_branding = p_branding) AND
-                (p_country IS NULL OR r.country = p_country) AND
-                r.date_local >= p_from AND 
-                r.date_local <= p_to
+        FROM    bloomReaderReads r
         ;
 
 END IF;
