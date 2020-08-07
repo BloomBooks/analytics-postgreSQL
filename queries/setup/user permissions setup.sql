@@ -1,4 +1,9 @@
 ---------------
+--- segment ---
+---------------
+GRANT SELECT ON TABLE public.geography_city_centers to segment;
+
+---------------
 -- readbloom --
 ---------------
 GRANT CONNECT ON DATABASE bloomsegment to readbloom;

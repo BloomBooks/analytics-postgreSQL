@@ -5,9 +5,9 @@ CREATE OR REPLACE FUNCTION public.NearestTownOf500(myLatitude numeric, myLongitu
 	RETURNS bigint AS $$
 DECLARE
 	closest bigint;
-	myLocation geometry;
+	myLocation public.geometry;
 BEGIN
-	SELECT ST_POINT(myLongitude, myLatitude) INTO myLocation;
+	SELECT public.ST_POINT(myLongitude, myLatitude) INTO myLocation;
 	SELECT geoid
 	FROM public.geography_city_centers
 	WHERE public.ST_DISTANCE(myLocation, geom) < bound
