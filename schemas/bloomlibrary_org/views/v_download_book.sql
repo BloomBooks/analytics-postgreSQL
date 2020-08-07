@@ -13,8 +13,7 @@ CREATE OR REPLACE VIEW bloomlibrary_org.v_download_book AS
             book_instance_id,
             COALESCE(event_type, 'shell') AS event_type,
             book_title,
-            -- TODO: fill this in once it exists
-            CAST(NULL AS TEXT) AS book_branding,
+            branding_project_name AS book_branding,
             c.country_name as country,
             c.region,
             c.city,
