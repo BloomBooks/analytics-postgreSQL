@@ -13,6 +13,10 @@ RETURNS TABLE (
         language TEXT, 
         started BIGINT, 
         finished BIGINT,
+        shellDownloads BIGINT,
+        pdfDownloads BIGINT,
+        epubDownloads BIGINT,
+        bloompubDownloads BIGINT,
         numQuestionsInBook BIGINT,
         numQuizzesTaken BIGINT,
         meanPctQuestionsCorrect NUMERIC,
@@ -25,18 +29,29 @@ BEGIN
     RETURN QUERY    
 
     SELECT
-            reads.*,
+            COALESCE(reads.bookInstanceId, comp.bookInstanceId, downloads.bookInstanceId) AS bookInstanceId,
+            COALESCE(reads.bookTitle, comp.bookTitle, downloads.bookTitle) AS bookTitle,
+            COALESCE(reads.bookBranding, comp.bookBranding, downloads.bookBranding) AS bookBranding,
+            reads.language, 
+            reads.started , 
+            reads.finished,
+            downloads.shellDownloads,
+            downloads.pdfDownloads,
+            downloads.epubDownloads,
+            downloads.bloompubDownloads,
             comp.numQuestionsInBook,
             comp.numQuizzesTaken,
             comp.meanPctCorrect,
             comp.medianPctCorrect
     FROM common.get_reading_perbook_base_events(p_useBookIds, p_from, p_to, p_branding, p_country) reads
 
-    -- Assumption: All comprehension events are also supposed to have a pages_read event,
-    --             so we assume that it's not possible to have a comprehension event w/o it.
-    --             This allows us to do a LEFT outer join instead of FULL (and not need to handle the left side's title/branding being possibly null)
-    LEFT OUTER JOIN common.get_reading_perbook_comprehension_events(p_useBookIds, p_from, p_to, p_branding, p_country) comp
+    FULL OUTER JOIN common.get_reading_perbook_comprehension_events(p_useBookIds, p_from, p_to, p_branding, p_country) comp
             ON reads.bookInstanceId = comp.bookInstanceId
+
+    -- Full outer join, because it should be possible for a book to be downloaded but not read.
+    FULL OUTER JOIN common.get_reading_perbook_download_events(p_useBookIds, p_from, p_to, p_branding, p_country) downloads
+        ON reads.bookInstanceId = downloads.bookInstanceId
+
     ;
 END; $$
 
