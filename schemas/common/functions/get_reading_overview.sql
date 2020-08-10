@@ -161,7 +161,7 @@ ELSE
                 WHERE   event_type = 'epub'), 0) AS downloadsEpubCount,
                 COALESCE((SELECT cnt
                 FROM    downloads
-                WHERE   event_type = 'bloomPub'), 0) AS downloadsBloomPubCount,
+                WHERE   event_type = 'bloompub'), 0) AS downloadsBloomPubCount,
                 COALESCE((SELECT cnt
                 FROM    downloads
                 WHERE   event_type = 'pdf'), 0) AS downloadsPdfCount,
