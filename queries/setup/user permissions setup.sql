@@ -38,6 +38,7 @@ GRANT SELECT ON TABLE common.mv_book_detail TO stats;
 GRANT SELECT ON TABLE common.mv_download_book TO stats;
 GRANT SELECT ON TABLE bloomlibrary_org.v_download_book to stats;
 GRANT SELECT ON TABLE bloomlibrary_org.v_book_detail to stats;
+GRANT SELECT ON TABLE bloomlibrary_org.v_pages_read to stats;
 GRANT USAGE ON SCHEMA bloomreader TO stats;
 GRANT SELECT ON TABLE bloomreader.v_book_or_shelf_opened to stats;
 GRANT SELECT ON TABLE bloomreader.v_pages_read to stats;

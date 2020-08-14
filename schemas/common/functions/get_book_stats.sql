@@ -16,7 +16,8 @@ BEGIN
         INTO    bloomReaderReads, 
                 deviceCount
         FROM    common.mv_pages_read pr
-        WHERE   pr.book_instance_id = p_bookInstanceId --AND
+        WHERE   pr.source = 'bloomreader' AND
+                pr.book_instance_id = p_bookInstanceId --AND
                 --pr.time_utc BETWEEN p_from AND (p_to + interval '1 day')
         ;
 

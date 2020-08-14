@@ -19,7 +19,7 @@ SELECT  timestamp,
         content_lang,
         location_uid,
         'release' as channel,
-        video_pages_played,
+        COALESCE(video_pages, video_pages_played) as video_pages_played,
         features,
         book_instance_id
 FROM    bloomreader.pages_read
@@ -39,7 +39,7 @@ SELECT  timestamp,
         content_lang,
         location_uid,
         'beta' as channel,
-        video_pages_played,
+        COALESCE(video_pages, video_pages_played) as video_pages_played,
         features,
         book_instance_id
 FROM    bloomreaderbeta.pages_read;

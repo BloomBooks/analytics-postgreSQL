@@ -1,9 +1,12 @@
 -- View: bloomreader.v_pages_read
 
--- DROP VIEW bloomreader.v_pages_read ;
+-- DROP VIEW bloomreader.v_pages_read;
 
 CREATE OR REPLACE VIEW bloomreader.v_pages_read AS
 
+-- CAREFUL!
+-- Any column changes here need to be reflected in bloomlibrary_org.v_pages_read
+-- and vice versa because they are unioned in mv_pages_read.
 SELECT  pr.timestamp as time_utc,
         pr.timestamp AT TIME ZONE pr.context_timezone as time_local,
         (pr.timestamp AT TIME ZONE pr.context_timezone)::DATE as date_local,

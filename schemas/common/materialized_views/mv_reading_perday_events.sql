@@ -4,6 +4,8 @@
 
 CREATE MATERIALIZED VIEW common.mv_reading_perday_events AS
 
+    -- Currently Bloom Reader only.
+    -- If we want all reads, use common.mv_pages_read.
     SELECT  book_instance_id,
             date_local,
             r.book_branding,

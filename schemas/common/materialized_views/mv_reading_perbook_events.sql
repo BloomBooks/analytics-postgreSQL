@@ -9,7 +9,7 @@ CREATE MATERIALIZED VIEW common.mv_reading_perbook_events AS
                 (SELECT book_instance_id,
                         MODE() WITHIN GROUP (ORDER BY book_title) AS book_title,
                         MODE() WITHIN GROUP (ORDER BY book_language_code) AS book_language_code
-                FROM    bloomreader.v_pages_read
+                FROM    common.mv_pages_read
                 group by book_instance_id
                 )
         SELECT  r.book_instance_id,
@@ -20,7 +20,7 @@ CREATE MATERIALIZED VIEW common.mv_reading_perbook_events AS
                 count(*) started, 
                 sum(r.finished_reading_book::int) finished,
                 r.date_local
-        FROM    bloomreader.v_pages_read r
+        FROM    common.mv_pages_read r
         INNER JOIN dataPerBook
                 ON r.book_instance_id = dataPerBook.book_instance_id
         WHERE   r.book_instance_id is not null

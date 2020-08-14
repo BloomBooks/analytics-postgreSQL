@@ -67,7 +67,8 @@ THEN
                         r.book_language_code
                 FROM    common.mv_pages_read r,
                         temp_book_ids b
-                WHERE   r.book_instance_id = b.book_instance_id AND
+                WHERE   r.source = 'bloomreader' AND
+                        r.book_instance_id = b.book_instance_id AND
                         r.date_local >= p_from AND 
                         r.date_local <= p_to)
         SELECT  (SELECT COUNT(DISTINCT u.book_instance_id)
@@ -136,7 +137,8 @@ ELSE
                         r.device_unique_id,
                         r.book_language_code
                 FROM    common.mv_pages_read r
-                WHERE   (p_branding IS NULL OR r.book_branding = p_branding) AND
+                WHERE   r.source = 'bloomreader' AND
+                        (p_branding IS NULL OR r.book_branding = p_branding) AND
                         (p_country IS NULL OR r.country = p_country) AND
                         r.date_local >= p_from AND 
                         r.date_local <= p_to)
