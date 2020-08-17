@@ -25,7 +25,7 @@ https://www.postgresql.org/docs/10/static/app-pgdump.html
 
 ### Geographic information
 
-The schema/public folder contains a pair of bash shell scripts that were used to create and populate the public geography_city_centers and geography_regioncodes tables. The data for these tables (which provide latitude and longitude information for cities and towns around the world) is from download.geonames.org/export/dump/. The exact details are provided in these shell scripts.
+The `bash-scripts` folder contains a pair of bash shell scripts that were used to create and populate the public geography_city_centers and geography_regioncodes tables. The data for these tables (which provide latitude and longitude information for cities and towns around the world) is from download.geonames.org/export/dump/. The exact details are provided in these shell scripts.
 
 A table named public.countrycodes already existed, so the corresponding data from geonames was not handled the same way. After comparing the existing data with the geonames data, 3 new rows were added to the existing table. (These particular codes may be obsolete or provisional, but are likely to be found in the geonames dataset.)
 
