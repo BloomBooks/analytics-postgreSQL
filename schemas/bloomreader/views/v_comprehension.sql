@@ -4,6 +4,9 @@
 
 CREATE OR REPLACE VIEW bloomreader.v_comprehension AS
 
+-- CAREFUL!
+-- Any column changes here need to be reflected in bloomlibrary_org.v_comprehension
+-- and vice versa because they are unioned in mv_comprehension.
 SELECT  comp.timestamp as time_utc,
         comp.timestamp AT TIME ZONE comp.context_timezone as time_local,
         (comp.timestamp AT TIME ZONE comp.context_timezone)::DATE as date_local,
@@ -30,7 +33,6 @@ SELECT  comp.timestamp as time_utc,
         comp.book_instance_id
 FROM    bloomreader.v_comprehension_raw comp
 left outer join public.countryregioncitylu c on comp.location_uid = c.loc_uid
---left outer join public.languagecodes l on comp.content_lang = COALESCE(l.langid2, l.langid) -- where comp.location_uid = c.loc_uid
 
  -- omit records where phone's clock was obviously messed up
 where comp.TIMESTAMP >= '2018-1-1'
