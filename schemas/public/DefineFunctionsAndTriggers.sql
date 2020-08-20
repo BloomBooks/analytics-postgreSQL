@@ -115,6 +115,24 @@ CREATE TRIGGER insert_location_data
 	FOR EACH ROW
 	EXECUTE PROCEDURE public.find_closest_city_and_location_uid_fctn();
 
+-- Create a trigger dealing with finding the location when adding a row to the
+-- bloomreadertest.comprehension table.
+DROP TRIGGER insert_location_data ON bloomreadertest.comprehension;
+CREATE TRIGGER insert_location_data
+	BEFORE INSERT
+	ON bloomreadertest.comprehension
+	FOR EACH ROW
+	EXECUTE PROCEDURE public.find_closest_city_and_location_uid_fctn();
+
+-- Create a trigger dealing with finding the location when adding a row to the
+-- bloomreadertest.install_attributed table.
+DROP TRIGGER insert_location_data ON bloomreadertest.install_attributed;
+CREATE TRIGGER insert_location_data
+	BEFORE INSERT
+	ON bloomreadertest.install_attributed
+	FOR EACH ROW
+	EXECUTE PROCEDURE public.find_closest_city_and_location_uid_fctn();
+
 -- The following lines are commented out until we get the necessary columns in those tables.
 --
 --DROP TRIGGER insert_location_uid ON bloomreaderbeta.book_or_shelf_opened;
@@ -141,6 +159,24 @@ CREATE TRIGGER insert_location_data
 --	EXECUTE PROCEDURE public.find_closest_city_and_location_uid_fctn();
 --
 ---- Create a trigger dealing with finding the location when adding a row to the
+---- bloomreaderbeta.comprehension table.
+--DROP TRIGGER insert_location_data ON bloomreaderbeta.comprehension;
+--CREATE TRIGGER insert_location_data
+--	BEFORE INSERT
+--	ON bloomreaderbeta.comprehension
+--	FOR EACH ROW
+--	EXECUTE PROCEDURE public.find_closest_city_and_location_uid_fctn();
+--
+---- Create a trigger dealing with finding the location when adding a row to the
+---- bloomreaderbeta.install_attributed table.
+--DROP TRIGGER insert_location_data ON bloomreaderbeta.install_attributed;
+--CREATE TRIGGER insert_location_data
+--	BEFORE INSERT
+--	ON bloomreaderbeta.install_attributed
+--	FOR EACH ROW
+--	EXECUTE PROCEDURE public.find_closest_city_and_location_uid_fctn();
+--
+---- Create a trigger dealing with finding the location when adding a row to the
 ---- bloomreader.book_or_shelf_opened table.
 --DROP TRIGGER insert_location_data ON bloomreader.book_or_shelf_opened;
 --CREATE TRIGGER insert_location_data
@@ -155,5 +191,23 @@ CREATE TRIGGER insert_location_data
 --CREATE TRIGGER insert_location_data
 --	BEFORE INSERT
 --	ON bloomreader.pages_read
+--	FOR EACH ROW
+--	EXECUTE PROCEDURE public.find_closest_city_and_location_uid_fctn();
+--
+---- Create a trigger dealing with finding the location when adding a row to the
+---- bloomreader.comprehension table.
+--DROP TRIGGER insert_location_data ON bloomreader.comprehension;
+--CREATE TRIGGER insert_location_data
+--	BEFORE INSERT
+--	ON bloomreader.comprehension
+--	FOR EACH ROW
+--	EXECUTE PROCEDURE public.find_closest_city_and_location_uid_fctn();
+--
+---- Create a trigger dealing with finding the location when adding a row to the
+---- bloomreader.install_attributed table.
+--DROP TRIGGER insert_location_data ON bloomreader.install_attributed;
+--CREATE TRIGGER insert_location_data
+--	BEFORE INSERT
+--	ON bloomreader.install_attributed
 --	FOR EACH ROW
 --	EXECUTE PROCEDURE public.find_closest_city_and_location_uid_fctn();
