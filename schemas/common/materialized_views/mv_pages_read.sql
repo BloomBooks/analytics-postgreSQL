@@ -36,3 +36,9 @@ CREATE INDEX book_instance_id_and_date_local
     (book_instance_id COLLATE pg_catalog."default" ASC NULLS LAST, 
     date_local ASC NULLS LAST)
     TABLESPACE pg_default;
+
+CREATE INDEX book_branding_and_source
+    ON common.mv_pages_read USING btree
+    (book_branding COLLATE pg_catalog."default" ASC NULLS LAST, 
+    source COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;

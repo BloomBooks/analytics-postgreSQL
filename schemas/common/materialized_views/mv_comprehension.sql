@@ -35,3 +35,9 @@ CREATE INDEX idx_mvcomp_book_instance_id_and_date_local
     (book_instance_id COLLATE pg_catalog."default" ASC NULLS LAST, 
     date_local ASC NULLS LAST)
     TABLESPACE pg_default;
+
+CREATE INDEX idx_mvcomp_book_branding_and_source
+    ON common.mv_comprehension USING btree
+    (book_branding COLLATE pg_catalog."default" ASC NULLS LAST, 
+    source COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
