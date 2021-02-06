@@ -17,7 +17,12 @@ SELECT  'release' as channel,
         location_uid,
         question_count,
         percent_right,
-        book_instance_id
+        book_instance_id,
+        cast(null as BIGINT) as city_center_id,
+        null as distribution_source,
+        null as host,
+        cast(null as NUMERIC) as latitude,
+        cast(null as NUMERIC) as longitude
 FROM    bloomreader.questions_correct
 UNION ALL
 SELECT  'beta' as channel,
@@ -31,7 +36,12 @@ SELECT  'beta' as channel,
         location_uid,
         question_count,
         percent_right,
-        book_instance_id
+        book_instance_id,
+        cast(null as BIGINT) as city_center_id,
+        null as distribution_source,
+        null as host,
+        cast(null as NUMERIC) as latitude,
+        cast(null as NUMERIC) as longitude
 FROM    bloomreaderbeta.questions_correct
 UNION ALL
 SELECT  'release' as channel,
@@ -45,7 +55,12 @@ SELECT  'release' as channel,
         location_uid,
         question_count,
         percent_right,
-        book_instance_id
+        book_instance_id,
+        city_center_id,
+        distribution_source,
+        host,
+        latitude,
+        longitude
 FROM    bloomreader.comprehension
 UNION ALL
 SELECT  'beta' as channel,
@@ -59,6 +74,11 @@ SELECT  'beta' as channel,
         location_uid,
         question_count,
         percent_right,
-        book_instance_id
+        book_instance_id,
+        city_center_id,
+        distribution_source,
+        host,
+        latitude,
+        longitude
 FROM    bloomreaderbeta.comprehension
 ;

@@ -41,3 +41,5 @@ CREATE INDEX idx_mvcomp_book_branding_and_source
     (book_branding COLLATE pg_catalog."default" ASC NULLS LAST, 
     source COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
+
+GRANT SELECT ON TABLE common.mv_comprehension TO stats;

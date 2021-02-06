@@ -40,7 +40,13 @@ SELECT  pr.timestamp as time_utc,
         NULL as channel,
         pr.video_pages as video_pages_played,
         pr.features,
-        pr.book_instance_id
+        pr.book_instance_id,
+        NULL AS distribution_source,
+        CAST(NULL AS NUMERIC) AS latitude_approx,
+        CAST(NULL AS NUMERIC) AS longitude_approx,
+        NULL AS country_geo,
+        NULL AS region_geo,
+        NULL AS city_geo
 FROM bloomlibrary_org.pages_read pr
 left outer join public.countryregioncitylu c on pr.location_uid = c.loc_uid
 --left outer join public.languagecodes l on pr.content_lang = COALESCE(l.langid2, l.langid) -- where pr.location_uid = c.loc_uid

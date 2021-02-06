@@ -27,7 +27,13 @@ SELECT  comp.timestamp as time_utc,
         c.region,
         c.city,        
         NULL AS channel,
-        comp.book_instance_id
+        comp.book_instance_id,
+        NULL AS distribution_source,
+        CAST(NULL AS NUMERIC) AS latitude_approx,
+        CAST(NULL AS NUMERIC) AS longitude_approx,
+        NULL AS country_geo,
+        NULL AS region_geo,
+        NULL AS city_geo
 FROM    bloomlibrary_org.comprehension comp
 left outer join public.countryregioncitylu c on comp.location_uid = c.loc_uid
 ;

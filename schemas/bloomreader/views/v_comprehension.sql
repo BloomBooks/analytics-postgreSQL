@@ -30,9 +30,16 @@ SELECT  comp.timestamp as time_utc,
         c.region,
         c.city,        
         comp.channel,
-        comp.book_instance_id
+        comp.book_instance_id,
+        comp.distribution_source,
+        round(comp.latitude, 2) as latitude_approx,
+        round(comp.longitude, 2) as longitude_approx,
+        c_geo.country as country_geo,
+        c_geo.region as region_geo,
+        c_geo.city as city_geo
 FROM    bloomreader.v_comprehension_raw comp
 left outer join public.countryregioncitylu c on comp.location_uid = c.loc_uid
+left outer join public.v_geography_country_region_city c_geo on comp.city_center_id = c_geo.city_geoid
 
  -- omit records where phone's clock was obviously messed up
 where comp.TIMESTAMP >= '2018-1-1'

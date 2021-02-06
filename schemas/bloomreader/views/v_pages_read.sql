@@ -43,9 +43,16 @@ SELECT  pr.timestamp as time_utc,
         pr.channel,
         pr.video_pages_played,
         pr.features,
-        pr.book_instance_id
+        pr.book_instance_id,
+        pr.distribution_source,
+        round(pr.latitude, 2) as latitude_approx,
+        round(pr.longitude, 2) as longitude_approx,
+        c_geo.country as country_geo,
+        c_geo.region as region_geo,
+        c_geo.city as city_geo
 FROM bloomreader.v_pages_read_raw pr
-left outer join public.countryregioncitylu c on pr.location_uid = c.loc_uid
+left outer join public.countryregioncitylu c on pr.location_uid = c.loc_uid 
+left outer join public.v_geography_country_region_city c_geo on pr.city_center_id = c_geo.city_geoid
 --left outer join public.languagecodes l on pr.content_lang = COALESCE(l.langid2, l.langid) -- where pr.location_uid = c.loc_uid
 
  -- omit records where phone's clock was obviously messed up

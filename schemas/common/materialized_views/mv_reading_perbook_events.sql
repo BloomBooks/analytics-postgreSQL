@@ -29,3 +29,5 @@ CREATE MATERIALIZED VIEW common.mv_reading_perbook_events AS
                 r.country,
                 r.date_local
         ;
+
+GRANT SELECT ON TABLE common.mv_reading_perbook_events TO stats;
