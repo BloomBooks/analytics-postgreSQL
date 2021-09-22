@@ -22,7 +22,10 @@ SELECT  'release' as channel,
         null as distribution_source,
         null as host,
         cast(null as NUMERIC) as latitude,
-        cast(null as NUMERIC) as longitude
+        cast(null as NUMERIC) as longitude,
+        null as location_source,
+        null as bookshelves,
+        cast(null as NUMERIC) as location_age_days
 FROM    bloomreader.questions_correct
 UNION ALL
 SELECT  'beta' as channel,
@@ -41,7 +44,10 @@ SELECT  'beta' as channel,
         null as distribution_source,
         null as host,
         cast(null as NUMERIC) as latitude,
-        cast(null as NUMERIC) as longitude
+        cast(null as NUMERIC) as longitude,
+        null as location_source,
+        null as bookshelves,
+        cast(null as NUMERIC) as location_age_days
 FROM    bloomreaderbeta.questions_correct
 UNION ALL
 SELECT  'release' as channel,
@@ -60,7 +66,10 @@ SELECT  'release' as channel,
         distribution_source,
         host,
         latitude,
-        longitude
+        longitude,
+        location_source,
+        bookshelves,
+        location_age_days
 FROM    bloomreader.comprehension
 UNION ALL
 SELECT  'beta' as channel,
@@ -79,6 +88,9 @@ SELECT  'beta' as channel,
         distribution_source,
         host,
         latitude,
-        longitude
+        longitude,
+        location_source,
+        bookshelves,
+        location_age_days
 FROM    bloomreaderbeta.comprehension
 ;

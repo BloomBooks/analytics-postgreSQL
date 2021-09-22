@@ -26,7 +26,13 @@ SELECT  timestamp,
         distribution_source,
         host,
         latitude,
-        longitude
+        longitude,
+        location_source,
+        bookshelves,
+        read_duration,
+        audio_duration,
+        video_duration,
+        location_age_days
 FROM    bloomreader.pages_read
 UNION ALL
 SELECT  timestamp,
@@ -51,6 +57,12 @@ SELECT  timestamp,
         distribution_source,
         host,
         latitude,
-        longitude
+        longitude,
+        location_source,
+        bookshelves,
+        read_duration,
+        audio_duration,
+        video_duration,
+        location_age_days
 FROM    bloomreaderbeta.pages_read;
 

@@ -10,6 +10,6 @@ WHERE   book_branding = 'PNG-WesternProvinceELearning-2020' AND
         source = 'bloomreader'
 ;
 
-GRANT CONNECT ON DATABASE bloomsegment TO bloomreader_save_western;
-GRANT USAGE ON SCHEMA bloomreader TO bloomreader_save_western;
-GRANT SELECT ON bloomreader.v_comprehension_save_western TO bloomreader_save_western;
+GRANT SELECT ON TABLE bloomreader.v_comprehension_save_western TO bloomreader_inclusiv;
+GRANT SELECT ON TABLE bloomreader.v_comprehension_save_western TO readbloom;
+GRANT SELECT ON TABLE bloomreader.v_comprehension_save_western TO bloomreader_save_western;

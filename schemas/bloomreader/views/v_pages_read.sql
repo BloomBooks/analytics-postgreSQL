@@ -49,7 +49,13 @@ SELECT  pr.timestamp as time_utc,
         round(pr.longitude, 2) as longitude_approx,
         c_geo.country as country_geo,
         c_geo.region as region_geo,
-        c_geo.city as city_geo
+        c_geo.city as city_geo,
+        pr.location_source,
+        pr.location_age_days,
+        pr.bookshelves,
+        pr.read_duration,
+        pr.audio_duration,
+        pr.video_duration
 FROM bloomreader.v_pages_read_raw pr
 left outer join public.countryregioncitylu c on pr.location_uid = c.loc_uid 
 left outer join public.v_geography_country_region_city c_geo on pr.city_center_id = c_geo.city_geoid

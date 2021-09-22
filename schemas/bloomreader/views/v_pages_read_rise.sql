@@ -10,6 +10,6 @@ WHERE   book_branding = 'PNG-RISE' AND
         source = 'bloomreader'
 ;
 
-GRANT CONNECT ON DATABASE bloomsegment TO bloomreader_rise;
-GRANT USAGE ON SCHEMA bloomreader TO bloomreader_rise;
-GRANT SELECT ON bloomreader.v_pages_read_rise TO bloomreader_rise;
+GRANT SELECT ON TABLE bloomreader.v_pages_read_rise TO bloomreader_inclusiv;
+GRANT SELECT ON TABLE bloomreader.v_pages_read_rise TO readbloom;
+GRANT SELECT ON TABLE bloomreader.v_pages_read_rise TO bloomreader_rise;
