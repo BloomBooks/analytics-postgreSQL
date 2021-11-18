@@ -20,6 +20,8 @@ To create the schema dump, I used pgAdmin 4, version 4.8:
 - Include CREATE DATABASE statement => Yes.
 - Click the "Backup" button.
 
+Today (11/2021), it took 381 seconds.
+
 You should be able to do the same thing using the command line tool, but we were having issues with it.
 https://www.postgresql.org/docs/10/static/app-pgdump.html
 
