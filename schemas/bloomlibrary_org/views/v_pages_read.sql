@@ -52,7 +52,8 @@ SELECT  pr.timestamp as time_utc,
         pr.bookshelves,
         pr.read_duration,
         pr.audio_duration,
-        pr.video_duration
+        pr.video_duration,
+        pr.host
 FROM bloomlibrary_org.pages_read pr
 left outer join public.countryregioncitylu c on pr.location_uid = c.loc_uid
 --left outer join public.languagecodes l on pr.content_lang = COALESCE(l.langid2, l.langid) -- where pr.location_uid = c.loc_uid
