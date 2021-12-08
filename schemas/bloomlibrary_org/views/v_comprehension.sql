@@ -36,7 +36,7 @@ SELECT  comp.timestamp as time_utc,
         NULL AS city_geo,
         NULL AS location_source,
         comp.bookshelves,
-        NULL AS location_age_days
+        CAST(NULL AS NUMERIC) AS location_age_days
 FROM    bloomlibrary_org.comprehension comp
 left outer join public.countryregioncitylu c on comp.location_uid = c.loc_uid
 ;
