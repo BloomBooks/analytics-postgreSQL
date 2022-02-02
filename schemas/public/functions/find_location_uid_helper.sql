@@ -26,10 +26,13 @@ BEGIN
 	country_name_temp :=NULL;
 	hold_region :=NULL;
 	hold_city :=NULL;
-	SELECT b.country_code, b.country_name, b.region, b.city FROM public.ipv42location AS b
-		WHERE (SELECT public.ip2ipv4(ip_address_temp))
-		BETWEEN b.ipv4_from and b.ipv4_to
-		INTO country_code_temp, country_name_temp, hold_region, hold_city ;
+
+    -- New algorithm to map from IP address (either IPv4 or IPv6) to location
+    -- old (used ip2ipv4() function, but that doesn't handle most IPv6 addreses correctly)
+	SELECT country_code, country_name, region, city
+	FROM public.ip_to_location(ip_address_temp)
+	INTO country_code_temp, country_name_temp, hold_region, hold_city;
+
 	IF country_code_temp ='-' or public.empty_to_null(country_code_temp) IS NULL THEN
 		country_code_temp := '-';
 	END IF;

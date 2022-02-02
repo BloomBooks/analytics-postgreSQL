@@ -20,8 +20,9 @@ BEGIN
 		END IF;
 	END IF;
 	--
-	-- The rest of this method is essentially unchanged from before, using the ip address
+	-- The rest of this method is essentially unchanged from before (the public.*_find_location_uid_4_*_fctn() variants), using the ip address
 	-- to get the location.
+	-- However, in Feb 2022, we fixed the calculation for getting the location for IPv6 addresses
 	SELECT *
     FROM public.find_location_uid_helper(NEW.context_ip)
     INTO loc_uid_temp;
