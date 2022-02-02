@@ -23,16 +23,25 @@ BEGIN
 	hold_region :=NULL;
 	hold_city :=NULL;
 
-    SELECT b.country_code, b.country_name, b.region, b.city FROM public.ipv42location AS b 
-    WHERE (SELECT public.ip2ipv4(ip_address))
-    BETWEEN b.ipv4_from and b.ipv4_to 
-    INTO country_code_temp, country_name_temp, hold_region, hold_city ;
+    -- New algorithm to map from IP address (either IPv4 or IPv6) to location
+	SELECT country_code, country_name, region, city
+	FROM public.ip_to_location(ip_address)
+	INTO country_code_temp, country_name_temp, hold_region, hold_city;
 
-    INSERT INTO public.ip2loc_sm_tab as s  
-        (context_ip, country_code, country_name)
-    VALUES
-        (public.ip2ipv4(ip_address), country_code_temp, country_name_temp)
-    ON CONFLICT ON CONSTRAINT ip2loc_sm_tab_db1_pkey DO NOTHING;
+    -- NOTE: Previously we always inserted this into ip2loc_sm_tab, even if it was an IPv6 address.
+    -- But the mapping via ip2ipv4 of IPV6 addresses is generally not going to produce good results
+    -- So in Feb 2022, this was changed to only cache incoming IPv4 addresses.
+    -- One alternative is to have ip2loc_sm_tab cache either,
+    -- but then we'd need to alter the column from bigint to numeric(39,0).
+    -- Another alternative is to have a v4 version of sm_tab and a v6 version of sm_tab,
+    -- but then we'd need to update all the places that read this.
+    IF NOT public.is_ipv6(ip_address) THEN
+        INSERT INTO public.ip2loc_sm_tab as s  
+            (context_ip, country_code, country_name)
+        VALUES
+            (public.ip2ipv4(ip_address), country_code_temp, country_name_temp)
+        ON CONFLICT ON CONSTRAINT ip2loc_sm_tab_db1_pkey DO NOTHING;
+    END IF;
 
 	loc_uid_temp := NULL;
 	SELECT i.loc_uid from public.countryregioncitylu AS i

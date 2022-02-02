@@ -26,9 +26,9 @@ BEGIN
 		END IF;
 	END IF;
 	--
-	-- The rest of this method is essentially unchanged from before, using the ip address
+	-- The rest of this method is essentially unchanged from before (the public.*_find_location_uid_4_*_fctn() variants), using the ip address
 	-- to get the location.
-	--
+	-- However, in Feb 2022, we fixed the calculation for getting the location for IPv6 addresses
 	counter := NULL;
 	SELECT MAX(c.loc_uid) FROM public.countryregioncitylu AS c INTO counter;
 	ip_address_temp := NEW.context_ip;
@@ -36,10 +36,12 @@ BEGIN
 	country_name_temp :=NULL;
 	hold_region :=NULL;
 	hold_city :=NULL;
-	SELECT b.country_code, b.country_name, b.region, b.city FROM public.ipv42location AS b
-		WHERE (SELECT public.ip2ipv4(ip_address_temp))
-		BETWEEN b.ipv4_from and b.ipv4_to
-		INTO country_code_temp, country_name_temp, hold_region, hold_city ;
+
+	-- New algorithm to map from IP address (either IPv4 or IPV6) to location
+	SELECT country_code, country_name, region, city
+	FROM public.ip_to_location(ip_address_temp)
+	INTO country_code_temp, country_name_temp, hold_region, hold_city;
+
 	IF country_code_temp ='-' or public.empty_to_null(country_code_temp) IS NULL THEN
 		country_code_temp := '-';
 	END IF;

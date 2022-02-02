@@ -2,7 +2,7 @@
 
 -- DROP FUNCTION public.insert_context_ip_country_bloom_fctn();
 
-CREATE FUNCTION public.insert_context_ip_country_bloom_fctn()
+CREATE OR REPLACE FUNCTION public.insert_context_ip_country_bloom_fctn()
     RETURNS trigger
     LANGUAGE 'plpgsql'
     VOLATILE
