@@ -47,8 +47,8 @@ echo "\copy $ipToLocationTableName FROM $SCRIPT_DIR_WIN\downloads\IP2LOCATION-LI
 ########
 ipv4ToLocationTableName=ipv42location_as_of_$dateStr
 echo "CREATE TABLE IF NOT EXISTS $ipv4ToLocationTableName (" >> $commandsFileName
-echo "    ip_from bigint NOT NULL," >> $commandsFileName
-echo "    ip_to bigint NOT NULL," >> $commandsFileName
+echo "    ipv4_from bigint NOT NULL," >> $commandsFileName
+echo "    ipv4_to bigint NOT NULL," >> $commandsFileName
 echo "    country_code character(2) COLLATE pg_catalog."default" NOT NULL," >> $commandsFileName
 echo "    country_name character varying(64) COLLATE pg_catalog.\"default\" NOT NULL," >> $commandsFileName
 echo "    region character varying(100) COLLATE pg_catalog.\"default\" NOT NULL," >> $commandsFileName
@@ -62,8 +62,8 @@ echo "\copy $ipv4ToLocationTableName FROM $SCRIPT_DIR_WIN\downloads\IP2LOCATION-
 ########
 ipv6ToLocationTableName=ipv62location_as_of_$dateStr
 echo "CREATE TABLE IF NOT EXISTS $ipv6ToLocationTableName (" >> $commandsFileName
-echo "    ip_from numeric(39,0) NOT NULL," >> $commandsFileName
-echo "    ip_to numeric(39,0) NOT NULL," >> $commandsFileName
+echo "    ipv6_from numeric(39,0) NOT NULL," >> $commandsFileName
+echo "    ipv6_to numeric(39,0) NOT NULL," >> $commandsFileName
 echo "    country_code character(2) COLLATE pg_catalog."default" NOT NULL," >> $commandsFileName
 echo "    country_name character varying(64) COLLATE pg_catalog.\"default\" NOT NULL," >> $commandsFileName
 echo "    region character varying(100) COLLATE pg_catalog.\"default\" NOT NULL," >> $commandsFileName
