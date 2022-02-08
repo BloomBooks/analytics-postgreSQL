@@ -6,4 +6,4 @@ CREATE TRIGGER insert_location_uid
     BEFORE INSERT
     ON bloomlibrary_org.book_or_shelf_opened
     FOR EACH ROW
-    EXECUTE FUNCTION public.bl_find_location_uid_4_book_or_shelf_opened_fctn();
+    EXECUTE FUNCTION public.find_location_uid_fctn();

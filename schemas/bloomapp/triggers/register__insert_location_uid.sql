@@ -6,4 +6,4 @@ CREATE TRIGGER insert_location_uid
     BEFORE INSERT
     ON bloomapp.register
     FOR EACH ROW
-    EXECUTE FUNCTION public.find_location_uid_4_register_fctn();
+    EXECUTE FUNCTION public.find_ip_location_uid_fctn();
