@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION public.insert_context_ip_country_bloom_fctn()
 -- NOTE: In the old database, Postgres says that this is "NOT LEAKPROOF".#
 -- When I try to specify "NOT LEAKPROOF" again, it gives an error about leakproof. Apparently, FlexServer does not support leakproof yet.
 -- Support is expected in Feb 2022, although here we are in Feb 2022...
--- That's why the below line is commneted out.
+-- That's why the below line is commented out.
 --    NOT LEAKPROOF
 AS $$
 DECLARE

@@ -1,7 +1,3 @@
--- Normalizes an IP address (e.g. "192.168.1.1" or "2400:ac40:852:471a::1")
--- Notably, converts IPV6 short form (uses :: as an abbreviation) into something which specifies all the 0's.
--- Note: Does not currently handle IP v6 "/" suffixes. I don't find this form in our tables.
---       Nor does it do anything particular with any other IPV6 format variant.
 CREATE OR REPLACE FUNCTION public.normalize_ip(ip_address character varying) RETURNS character varying
     LANGUAGE plpgsql IMMUTABLE
     AS $$
@@ -12,6 +8,14 @@ DECLARE
 	num_colon_chars integer;
 	num_implicit_zeros integer;
 BEGIN
+	--------
+	-- Normalizes an IP address (e.g. "192.168.1.1" or "2400:ac40:852:471a::1")
+	-- Notably, converts IPV6 short form (uses :: as an abbreviation) into something which specifies all the 0's.
+	-- Note: Does not currently handle IP v6 "/" suffixes. I don't find this form in our tables.
+	--       Nor does it do anything particular with any other IPV6 format variant.
+	--------
+
+	
 	IF NOT public.is_ipv6(ip_address) THEN
 		-- Looks like a v4.
 		-- We currently don't have any normalization steps to do for v4. Just return it untouched.

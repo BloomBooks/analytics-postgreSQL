@@ -1,11 +1,5 @@
 -- DROP FUNCTION public.insert_ip_country_helper();
 
--- This is more-or-less the same as the trigger functions insert_ip-country_bloom_fctn() and public.insert_context_ip_country_bloom_fctn()
--- The only difference between those two 0-arg trigger functions was which Column Name they read from.
--- So the 99% identical part was extracted out and turned it into this 1-arg function
--- I kept the trigger functions the same though (didn't combine them into a single trigger function that requires an argument), because:
--- 1) Mainly so that we don't have to update a bunch of tables' triggers.
--- 2) A minor reason is that passing arguments to trigger functions is more annoying than to a normal function.
 CREATE OR REPLACE FUNCTION public.insert_ip_country_helper(ip_address character varying) RETURNS void
     LANGUAGE plpgsql VOLATILE
     AS $$
@@ -17,6 +11,16 @@ DECLARE
     loc_uid_temp bigint;
     counter bigint;
 BEGIN
+    --------
+    -- This is more-or-less the same as the trigger functions insert_ip-country_bloom_fctn() and public.insert_context_ip_country_bloom_fctn()
+    -- The only difference between those two 0-arg trigger functions was which Column Name they read from.
+    -- So the 99% identical part was extracted out and turned it into this 1-arg function
+    -- I kept the trigger functions the same though (didn't combine them into a single trigger function that requires an argument), because:
+    -- 1) Mainly so that we don't have to update a bunch of tables' triggers.
+    -- 2) A minor reason is that passing arguments to trigger functions is more annoying than to a normal function.
+    --------
+
+    
 	SELECT MAX(c.loc_uid) FROM public.countryregioncitylu AS c INTO counter;
 	country_code_temp :=NULL;
 	country_name_temp :=NULL;

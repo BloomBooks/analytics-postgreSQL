@@ -1,7 +1,3 @@
--- This function converts an IPv6 Address (e.g. '2800:98:1010:ef84:d38a:d0a7:3724:570a')
--- into the "IP Number" format defined by ip2location. 
--- The "IP Number" format simplifies lookup in the ipv62location table.
--- For details, see https://lite.ip2location.com/faq, Section "How do I convert an IPv6 Address to an IP Number"
 CREATE OR REPLACE FUNCTION public.ip_to_ipv6number(ipv6_address character varying) RETURNS numeric(39,0)
     LANGUAGE plpgsql IMMUTABLE
     AS $$
@@ -11,6 +7,14 @@ DECLARE
 	normalized_ipv6_address text;
 	segments text[];
 BEGIN
+	--------
+	-- This function converts an IPv6 Address (e.g. '2800:98:1010:ef84:d38a:d0a7:3724:570a')
+	-- into the "IP Number" format defined by ip2location. 
+	-- The "IP Number" format simplifies lookup in the ipv62location table.
+	-- For details, see https://lite.ip2location.com/faq, Section "How do I convert an IPv6 Address to an IP Number"
+	--------
+
+
 	IF NOT public.is_ipv6(ipv6_address) THEN
 		RETURN 0;
 	END IF;

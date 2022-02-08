@@ -2,10 +2,6 @@
 
 -- DROP FUNCTION public.find_location_uid_helper();
 
--- This is extracted out from the shared code of find_location_uid_fctn and find_closest_city_and_location_uid_fctn
--- It takes the IP address, maps it to a location, then
--- finds it in the countryregioncitylu table (or adds it if necessary),
--- and returns the loc_uid of the row in the countryregioncitylu table.
 CREATE OR REPLACE FUNCTION public.find_location_uid_helper(ip_address character varying)
     RETURNS bigint
     LANGUAGE 'plpgsql'
@@ -19,6 +15,14 @@ DECLARE
     loc_uid_temp bigint;
     counter bigint;
 BEGIN
+	--------
+	-- This is extracted out from the shared code of find_location_uid_fctn and find_closest_city_and_location_uid_fctn
+	-- It takes the IP address, maps it to a location, then
+	-- finds it in the countryregioncitylu table (or adds it if necessary),
+	-- and returns the loc_uid of the row in the countryregioncitylu table.
+	--------
+
+
 	counter := NULL;
 	SELECT MAX(c.loc_uid) FROM public.countryregioncitylu AS c INTO counter;
 	ip_address_temp := ip_address;

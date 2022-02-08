@@ -2,8 +2,6 @@
 
 -- DROP FUNCTION public.ip2ipv4(character varying);
 
--- The name is confusing, but this converts from an IP address in standard IPv4 (127.0.0.1) or standard IPv6 (sort of...) formats
--- and converts it to the "IP Number" used in the ip2location and ipv42location tables.
 CREATE OR REPLACE FUNCTION public.ip2ipv4(
 	ip character varying)
     RETURNS bigint	-- This is the "IP Number" used by the ip2location data. It takes the IPv4 address in 127.0.0.1 format, assumes it is a 4-digit base 256 number, and converts it to decimal for easier comparison.
@@ -33,6 +31,12 @@ DECLARE
 	k integer; l integer; m integer; n integer; o integer; 
 	p integer; 
 BEGIN
+	--------
+	-- The name is confusing, but this converts from an IP address in standard IPv4 (127.0.0.1) or standard IPv6 (sort of...) formats
+	-- and converts it to the "IP Number" used in the ip2location and ipv42location tables.
+	--------
+
+	
   	IF (STRPOS(ip,'<') > 0)  THEN
   		retip:='0.0.0.0';
         EXECUTE format('SELECT inet %L - %L', retip, '0.0.0.0') into retint;

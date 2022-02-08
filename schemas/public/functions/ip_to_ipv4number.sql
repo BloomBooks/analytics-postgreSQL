@@ -1,11 +1,15 @@
--- This is more-or-less an alias for public.ip2ipv4(). It is here for parallelism with ip_to_ipv6number
--- This converts an IPV4 address into the "IP Number" format defined by ip2location. 
 CREATE OR REPLACE FUNCTION public.ip_to_ipv4number(ipv4_address character varying) RETURNS bigint
     LANGUAGE plpgsql IMMUTABLE
     AS $$
 DECLARE
 	return_ipv4_number bigint;
 BEGIN
+    --------
+    -- This is more-or-less an alias for public.ip2ipv4(). It is here for parallelism with ip_to_ipv6number
+    -- This converts an IPv4 address into the "IP Number" format defined by ip2location. 
+    --------
+
+    
 	IF public.is_ipv6(ipv4_address) THEN
         -- IPv6 input
         -- Well, one difference between this function and public.ip2ipv4()

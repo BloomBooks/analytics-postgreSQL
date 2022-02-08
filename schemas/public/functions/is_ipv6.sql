@@ -1,4 +1,3 @@
--- Given an IP address, returns true if it an IPv6 address, and false if it is an IPv4 address.
 CREATE OR REPLACE FUNCTION public.is_ipv6(ip_address character varying) RETURNS boolean
     LANGUAGE plpgsql IMMUTABLE
     AS $$
@@ -6,6 +5,11 @@ CREATE OR REPLACE FUNCTION public.is_ipv6(ip_address character varying) RETURNS 
 DECLARE
     is_ipv6 boolean;
 BEGIN
+    --------
+    -- Given an IP address, returns true if it an IPv6 address, and false if it is an IPv4 address.
+    --------
+
+
     -- An IPv6 address normally contains 8 groups of hex digits separated by 7 colons,
     -- so make this determination based on the presence of colons.
     --

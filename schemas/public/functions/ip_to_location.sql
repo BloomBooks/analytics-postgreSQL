@@ -1,4 +1,4 @@
--- Given an IP address, returns the location from either ipv42location (for IPV4 addresses) or ipv62location (for IPv6 addresses)
+
 CREATE OR REPLACE FUNCTION public.ip_to_location(
         ip_address character varying,
         OUT country_code character(2),
@@ -11,6 +11,11 @@ CREATE OR REPLACE FUNCTION public.ip_to_location(
     AS $$
 DECLARE
 BEGIN
+    --------
+    -- Given an IP address, returns the location from either ipv42location (for IPV4 addresses) or ipv62location (for IPv6 addresses)
+    --------
+
+
     IF public.is_ipv6(ip_address) THEN
         SELECT a.country_code, a.country_name, a.region, a.city
         FROM ipv62location AS a
