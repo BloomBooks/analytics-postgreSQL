@@ -18,12 +18,12 @@ BEGIN
 
     IF public.is_ipv6(ip_address) THEN
         SELECT a.country_code, a.country_name, a.region, a.city
-        FROM ipv62location AS a
+        FROM public.ipv62location AS a
         WHERE public.ip_to_ipv6number(ip_address) BETWEEN ipv6_from and ipv6_to
         INTO country_code, country_name, region, city;
     ELSE
         SELECT a.country_code, a.country_name, a.region, a.city
-        FROM ipv42location AS a
+        FROM public.ipv42location AS a
         WHERE public.ip_to_ipv4number(ip_address) BETWEEN ipv4_from and ipv4_to
         INTO country_code, country_name, region, city;
     END IF;
