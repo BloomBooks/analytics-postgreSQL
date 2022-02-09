@@ -4,7 +4,7 @@
 
 CREATE OR REPLACE FUNCTION public.ip2ipv4(
 	ip character varying)
-    RETURNS bigint
+    RETURNS bigint	-- This is the "IP Number" used by the ip2location data. It takes the IPv4 address in 127.0.0.1 format, assumes it is a 4-digit base 256 number, and converts it to decimal for easier comparison.
     LANGUAGE 'plpgsql'
 
     COST 100
@@ -31,6 +31,12 @@ DECLARE
 	k integer; l integer; m integer; n integer; o integer; 
 	p integer; 
 BEGIN
+	--------
+	-- The name is confusing, but this converts from an IP address in standard IPv4 (127.0.0.1) or standard IPv6 (sort of...) formats
+	-- and converts it to the "IP Number" used in the ip2location and ipv42location tables.
+	--------
+
+	
   	IF (STRPOS(ip,'<') > 0)  THEN
   		retip:='0.0.0.0';
         EXECUTE format('SELECT inet %L - %L', retip, '0.0.0.0') into retint;
@@ -49,6 +55,15 @@ BEGIN
 		END IF;
 	ELSE
          IF STRPOS(ip,':') > 0 THEN
+		 	-- Note (2022-01-31):
+			-- Handles IPv6 (sort of).
+			-- This code assumes the IPv6 address is in valid 6to4 notation, and deciphers it accordingly
+			-- In this notation, Octet8 (note: not actually an octet. Represents the left-most segment) should contain decimal 2002,
+			-- and Octet7 and Octet6 encode the IPv4 address.
+			-- All other "octets" (segments) should be 0.
+			-- However, this code does not verify if the IPv6 address is actually a 6to4 address,
+			-- and will just blindly convert any IPv6 using the 6to4 algorithm even if it's not a 6to4 notation address.
+			-- If you look up the result in ipv42location, you will not get the correct location out.
 	  		BEGIN
 	  			colon_occ:=7;
 				RestOfIP := ip;
