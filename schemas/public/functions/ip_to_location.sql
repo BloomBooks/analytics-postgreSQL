@@ -34,12 +34,11 @@ ALTER FUNCTION public.ip_to_location(ip_address character varying) OWNER TO silp
 
 
 -- Unit test for ip_to_location
+-- Make sure all columns return true.
 SELECT
-	city='Guatemala City' AS pass1,
-	b.pass2
-FROM public.ip_to_location('2800:98:1010:ef84:d38a:d0a7:3724:570a')
-CROSS JOIN (
-	SELECT city='Santo Domingo' AS pass2
-	FROM public.ip_to_location('152.0.0.16')
-) AS b
+    (public.ip_to_location('2800:98:1010:ef84:d38a:d0a7:3724:570a')).city='Guatemala City' AS pass1,
+    (public.ip_to_location('152.0.0.16')).city='Santo Domingo' AS pass2,
+    (public.ip_to_location('garbage input')).city='-' AS pass3
+FROM public.ipv42location -- any valid table name works
+LIMIT 1
 ;

@@ -10,19 +10,22 @@ DECLARE
 BEGIN
 	--------
 	-- Normalizes an IP address (e.g. "192.168.1.1" or "2400:ac40:852:471a::1")
-	-- Notably, converts IPV6 short form (uses :: as an abbreviation) into something which specifies all the 0's.
+	-- Notably, uncompresses IPV6 short form (uses :: as an abbreviation) into an uncompressed form which specifies all the 0's.
 	-- Note: Does not currently handle IP v6 "/" suffixes. I don't find this form in our tables.
 	--       Nor does it do anything particular with any other IPV6 format variant.
+	-- Precondition: The input ip_address must be valid (castable to type "inet")
 	--------
 
-	
-	IF NOT public.is_ipv6(ip_address) THEN
-		-- Looks like a v4.
+	-- Note: PostgreSQL does have an inet type, but it doesn't seem to have any
+	-- function that uncompresses compressed IPv6 addresses for us.
+
+	IF family(inet(ip_address))=4 THEN
+		-- It's an IPv4 address.
 		-- We currently don't have any normalization steps to do for v4. Just return it untouched.
 		RETURN ip_address;
 	END IF;
 
-	-- Looks like an IPv6 address
+	-- It's an IPv6 address
 	--
 	-- Handle short forms (where two colons in a row are shorthand for filling all the missing segments with 0's)
 	-- https://www.ibm.com/docs/en/i/7.4?topic=concepts-ipv6-address-formats
@@ -54,8 +57,13 @@ BEGIN
 
     RETURN normalized_ipv6;
 EXCEPTION
-	-- if there's an exception, just return the input unchanged.
+	WHEN invalid_text_representation THEN
+		-- If the input is garbage, re-raise the original exception
+		RAISE;
+	
 	WHEN others THEN
+		-- if there's any other exception (presumably in our custom normalizing code),
+		-- just return the input unchanged.
 		RAISE warning 'public.normalize_ip threw exception on input: %', ip_address;
 		return ip_address;
 END;
