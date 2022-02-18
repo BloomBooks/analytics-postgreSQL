@@ -1,4 +1,4 @@
--- DROP FUNCTION common.get_reading_perbook_base_ events(BOOLEAN, DATE, DATE, TEXT, TEXT);
+-- DROP FUNCTION common.get_reading_perbook_base_events(BOOLEAN, DATE, DATE, TEXT, TEXT);
 
 CREATE OR REPLACE FUNCTION common.get_reading_perbook_base_events(
         p_useBookIds BOOLEAN,
