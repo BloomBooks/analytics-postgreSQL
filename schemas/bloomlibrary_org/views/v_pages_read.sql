@@ -53,7 +53,11 @@ SELECT  pr.timestamp as time_utc,
         pr.read_duration,
         pr.audio_duration,
         pr.video_duration,
-        pr.host
+        pr.host,
+        CAST(NULL AS NUMERIC) AS city_latitude_geo,
+        CAST(NULL AS NUMERIC) AS city_longitude_geo,
+        NULL AS country_code_geo,
+        CAST(c.country_code AS TEXT) AS country_code
 FROM bloomlibrary_org.pages_read pr
 left outer join public.countryregioncitylu c on pr.location_uid = c.loc_uid
 --left outer join public.languagecodes l on pr.content_lang = COALESCE(l.langid2, l.langid) -- where pr.location_uid = c.loc_uid

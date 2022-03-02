@@ -6,8 +6,11 @@ CREATE OR REPLACE FUNCTION common.process_reading_locations(
     p_to date DEFAULT ((30000101)::TEXT)::date
 ) RETURNS TABLE (
     country TEXT,
+    country_code TEXT,
     region TEXT,
     city TEXT,
+    city_latitude_gps NUMERIC,
+    city_longitude_gps NUMERIC,
     cnt BIGINT
 ) LANGUAGE plpgsql AS $function$
 /*
@@ -29,8 +32,11 @@ BEGIN
                 r.book_instance_id,
                 -- prefer the geo (from GPS) data if we have it
                 COALESCE(r.country_geo, r.country) AS country,
+                COALESCE(r.country_code_geo, r.country_code) AS country_code,
                 COALESCE(r.region_geo, r.region) AS region,
-                COALESCE(r.city_geo, r.city) AS city
+                COALESCE(r.city_geo, r.city) AS city,
+                r.city_latitude_geo AS city_latitude_gps,
+                r.city_longitude_geo AS city_longitude_gps
             FROM common.mv_pages_read AS r
             INNER JOIN b ON
                 r.book_instance_id = b.book_instance_id
@@ -39,15 +45,26 @@ BEGIN
         )
         SELECT
             CAST(r.country AS TEXT) AS country,
+            CAST(r.country_code AS TEXT) AS country_code,
             CAST(r.region AS TEXT) AS region,
             CAST(r.city AS TEXT) AS city,
+            r.city_latitude_gps AS city_latitude_gps,
+            r.city_longitude_gps AS city_longitude_gps,
             count(*) AS cnt
         FROM 
             reads r
         GROUP BY 
             r.country,
+            r.country_code,
             r.region,
-            r.city
+            r.city,
+            -- This is not the ideal. We would like to return one record for 
+            -- each city, regardless of whether we have lat/long for it.
+            -- But we couldn't figure out how to make that work in this query.
+            -- (It would likely take wrapping this in another layer and joining to itself or similar.)
+            -- So for now, the blorg client is summing them.
+            r.city_latitude_gps,
+            r.city_longitude_gps
         ;
 END;
 $function$;

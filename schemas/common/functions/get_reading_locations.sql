@@ -9,8 +9,11 @@ CREATE OR REPLACE FUNCTION common.get_reading_locations(
 )
 RETURNS TABLE (
     country TEXT,
+    country_code TEXT,
     region TEXT,
     city TEXT,
+    city_latitude_gps NUMERIC,
+    city_longitude_gps NUMERIC,
     cnt BIGINT
 ) 
 LANGUAGE plpgsql AS $function$

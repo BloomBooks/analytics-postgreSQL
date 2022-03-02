@@ -56,7 +56,11 @@ SELECT  pr.timestamp as time_utc,
         pr.read_duration,
         pr.audio_duration,
         pr.video_duration,
-        pr.host
+        pr.host,
+        c_geo.latitude as city_latitude_geo,
+        c_geo.longitude as city_longitude_geo,
+        c_geo.country_code as country_code_geo,
+        c.country_code
 FROM bloomreader.v_pages_read_raw pr
 left outer join public.countryregioncitylu c on pr.location_uid = c.loc_uid 
 left outer join public.v_geography_country_region_city c_geo on pr.city_center_id = c_geo.city_geoid
