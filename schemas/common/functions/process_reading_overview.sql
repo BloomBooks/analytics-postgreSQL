@@ -61,7 +61,11 @@ BEGIN
         bloomReaderReads AS (
             SELECT
                 r.book_instance_id,
-                r.device_unique_id,
+                r.anonymous_id,
+                -- Aug 2022 we were forced to stop collecting actual device ID by Android policy changes.
+                -- Segment switched to a new "device ID" but that meant all our device stats were going
+                -- to double over time. So we switched to user data instead. See BL-11380.
+                --r.device_unique_id,
                 r.book_language_code
             FROM common.mv_pages_read AS r
             INNER JOIN b ON
@@ -86,8 +90,9 @@ BEGIN
             ) AS bookCount,
             COUNT(DISTINCT r.book_language_code) AS languageCount,
             (SELECT COUNT(DISTINCT topic) FROM d) AS topicCount,
-            COUNT(DISTINCT r.device_unique_id) AS deviceMobileCount,
-            COUNT(DISTINCT r.device_unique_id) AS deviceCount,
+            -- See comment above about anonymous_id vs device_unique_id
+            COUNT(DISTINCT r.anonymous_id) AS deviceMobileCount,
+            COUNT(DISTINCT r.anonymous_id) AS deviceCount,
             CAST(0 AS BIGINT) AS devicePCCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'epub'), 0) AS downloadsEpubCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'bloompub'), 0) AS downloadsBloomPubCount,
@@ -125,7 +130,8 @@ BEGIN
         bloomReaderReads AS (
             SELECT
                 r.book_instance_id,
-                r.device_unique_id,
+                -- See comment above about anonymous_id vs device_unique_id
+                r.anonymous_id,
                 r.book_language_code
             FROM common.mv_pages_read AS r
             WHERE
@@ -148,8 +154,9 @@ BEGIN
             ) AS bookCount,
             COUNT(DISTINCT r.book_language_code) AS languageCount,
             (SELECT COUNT(DISTINCT topic) FROM d) AS topicCount,
-            COUNT(DISTINCT r.device_unique_id) AS deviceMobileCount,
-            COUNT(DISTINCT r.device_unique_id) AS deviceCount,
+            -- See comment above about anonymous_id vs device_unique_id
+            COUNT(DISTINCT r.anonymous_id) AS deviceMobileCount,
+            COUNT(DISTINCT r.anonymous_id) AS deviceCount,
             CAST(0 AS BIGINT) AS devicePCCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'epub'), 0) AS downloadsEpubCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'bloompub'), 0) AS downloadsBloomPubCount,

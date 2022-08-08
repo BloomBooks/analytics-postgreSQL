@@ -5,14 +5,18 @@ CREATE OR REPLACE FUNCTION common.get_book_stats(
     RETURNS TABLE (bookId VARCHAR, totalReads INT, bloomReaderReads INT, bloomLibraryReads INT, totalDownloads INT, shellDownloads INT, libraryViews INT, deviceCount INT)
 AS $$
 
--- For now, just ignoring timestamp because we don't have a use case in which we are filtering for it yet,
+-- For now, we are ignoring the timestamp because we don't have a use case in which we are filtering for it yet,
 -- and it is likey a performance drag.
 
 DECLARE
 
 BEGIN
         SELECT  count(*),
-                count(distinct pr.device_unique_id) 
+                count(distinct pr.anonymous_id) 
+                -- Aug 2022 we were forced to stop collecting actual device ID by Android policy changes.
+                -- Segment switched to a new "device ID" but that meant all our device stats were going
+                -- to double over time. So we switched to user data instead. See BL-11380.
+                --count(distinct pr.device_unique_id) 
         INTO    bloomReaderReads, 
                 deviceCount
         FROM    common.mv_pages_read pr
@@ -44,7 +48,7 @@ BEGIN
         INTO    shellDownloads
         FROM    downloads 
         WHERE   event_type = 'shell';
-        SELECT  cnt
+        SELECT  sum(cnt)
         INTO    totalDownloads
         FROM    downloads 
         WHERE   event_type <> 'read';
