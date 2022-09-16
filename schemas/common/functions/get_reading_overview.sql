@@ -10,17 +10,27 @@ CREATE OR REPLACE FUNCTION common.get_reading_overview(
     bookcount bigint,
     languagecount bigint,
     topiccount bigint,
+
+    -- These device counts are obsolete but must remain until 
+    -- related changes are deployed in blorg.
     devicemobilecount bigint,
-    devicecount bigint,
     devicepccount bigint,
+
+    userappcount bigint,
+    userbloomreadercount bigint,
+    userbloompubviewercount bigint,
+    userwebcount bigint,
+
     downloadsepubcount bigint,
     downloadsbloompubcount bigint,
     downloadspdfcount bigint,
     downloadsshellbookscount bigint,
+
     readsbloomreadercount bigint,
-    bloomreaderreadcount bigint,
     readswebcount bigint,
-    readsappscount bigint
+    readsappscount bigint,
+    
+    countrycount bigint
 ) LANGUAGE plpgsql AS $function$
 /*
  * This wrapper function will aggregrate & cast temp table data (if being
