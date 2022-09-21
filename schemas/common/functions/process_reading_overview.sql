@@ -1,3 +1,5 @@
+-- DROP FUNCTION common.process_reading_overview(common.book_id_input[], BOOLEAN, DATE, DATE, TEXT, TEXT);
+
 CREATE OR REPLACE FUNCTION common.process_reading_overview(
     b_input common.book_id_input[], -- null & ignored if not required
     p_usebookids boolean,
@@ -9,17 +11,27 @@ CREATE OR REPLACE FUNCTION common.process_reading_overview(
     bookcount bigint,
     languagecount bigint,
     topiccount bigint,
+
+    -- These device counts are obsolete but must remain until 
+    -- related changes are deployed in blorg.
     devicemobilecount bigint,
-    devicecount bigint,
     devicepccount bigint,
+
+    userappcount bigint,
+    userbloomreadercount bigint,
+    userbloompubviewercount bigint,
+    userwebcount bigint,
+
     downloadsepubcount bigint,
     downloadsbloompubcount bigint,
     downloadspdfcount bigint,
     downloadsshellbookscount bigint,
+
     readsbloomreadercount bigint,
-    bloomreaderreadcount bigint,
     readswebcount bigint,
-    readsappscount bigint
+    readsappscount bigint,
+
+    countrycount bigint
 ) LANGUAGE plpgsql AS $function$
 /*
  * This processing logic for common.get_reading_overview() returns general
@@ -72,9 +84,33 @@ BEGIN
                 r.book_instance_id = b.book_instance_id
             WHERE
                 r."source" = 'bloomreader'
-                -- we would normally use date_local,
-                -- but the web events don't include timezone
                 AND r.date_local BETWEEN p_from AND p_to
+        ),
+        countries AS (
+            SELECT COUNT(DISTINCT country_code) AS cnt
+            FROM common.mv_pages_read r
+            INNER JOIN b ON
+                r.book_instance_id = b.book_instance_id
+            WHERE r.date_local BETWEEN p_from AND p_to
+        ),
+        -- This represents some cruft in our model.
+        -- Currently, everything comes into either the
+        -- 'bloomreader' segment source or the 'bloomlibrary' 
+        -- one. But what that actually means is the Android sdk 
+        -- vs the js one (i.e. reported from bloom-player).
+        -- So RAB and BloomPUB Viewer, which currently report
+        -- directly using bloom-player, are mislabled with the
+        -- 'bloomlibrary' source. We use the host field to distinguish.
+        nonBrUserCounts AS (
+            SELECT COALESCE(r.host, 'bloomlibrary') AS host,
+                COUNT(DISTINCT anonymous_id) AS cnt
+            FROM common.mv_pages_read AS r
+            INNER JOIN b ON
+                r.book_instance_id = b.book_instance_id
+            WHERE 
+                r."source" = 'bloomlibrary'
+                AND r.date_local BETWEEN p_from AND p_to
+            GROUP BY COALESCE(r.host, 'bloomlibrary')
         )
         -- final aggregate primarily pivots row data to columnar in single row
         SELECT
@@ -90,18 +126,25 @@ BEGIN
             ) AS bookCount,
             COUNT(DISTINCT r.book_language_code) AS languageCount,
             (SELECT COUNT(DISTINCT topic) FROM d) AS topicCount,
-            -- See comment above about anonymous_id vs device_unique_id
+
+            -- See comment above about these being obsolete
             COUNT(DISTINCT r.anonymous_id) AS deviceMobileCount,
-            COUNT(DISTINCT r.anonymous_id) AS deviceCount,
             CAST(0 AS BIGINT) AS devicePCCount,
+
+            COALESCE((SELECT cnt FROM nonBrUserCounts WHERE host = 'readerapp'), 0) AS userAppCount,
+            -- See comment above about anonymous_id vs device_unique_id
+            COUNT(DISTINCT r.anonymous_id) AS userBloomReaderCount,
+            COALESCE((SELECT cnt FROM nonBrUserCounts WHERE host = 'bloompubviewer'), 0) AS userBloomPUBViewerCount,
+            COALESCE((SELECT cnt FROM nonBrUserCounts WHERE host = 'bloomlibrary'), 0) AS userWebCount,
+
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'epub'), 0) AS downloadsEpubCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'bloompub'), 0) AS downloadsBloomPubCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'pdf'), 0) AS downloadsPdfCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'shell'), 0) AS downloadsShellbooksCount,
             COUNT(*) AS readsBloomReaderCount,
-            COUNT(*) AS bloomReaderReadCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'read'), 0) AS readsWebCount,
-            CAST(0 AS BIGINT) AS readsAppsCount
+            CAST(0 AS BIGINT) AS readsAppsCount,
+            COALESCE((SELECT cnt FROM countries), 0) AS countryCount
         FROM bloomReaderReads AS r;
     -- no temp table data required
     ELSE RETURN QUERY
@@ -139,6 +182,32 @@ BEGIN
                 AND (p_branding IS NULL OR r.book_branding = p_branding)
                 AND (p_country IS NULL OR r.country = p_country)
                 AND r.date_local BETWEEN p_from AND p_to
+        ),
+        countries AS (
+            SELECT COUNT(DISTINCT country_code) AS cnt
+            FROM common.mv_pages_read r
+            INNER JOIN b ON
+                r.book_instance_id = b.book_instance_id
+            WHERE r.date_local BETWEEN p_from AND p_to
+        ),
+        -- This represents some cruft in our model.
+        -- Currently, everything comes into either the
+        -- 'bloomreader' segment source or the 'bloomlibrary' 
+        -- one. But what that actually means is the Android sdk 
+        -- vs the js one (i.e. reported from bloom-player).
+        -- So RAB and BloomPUB Viewer, which currently report
+        -- directly using bloom-player, are mislabled with the
+        -- 'bloomlibrary' source. We use the host field to distinguish.
+        nonBrUserCounts AS (
+            SELECT COALESCE(r.host, 'bloomlibrary') AS host,
+                COUNT(DISTINCT anonymous_id) AS cnt
+            FROM common.mv_pages_read AS r
+            INNER JOIN b ON
+                r.book_instance_id = b.book_instance_id
+            WHERE 
+                r."source" = 'bloomlibrary'
+                AND r.date_local BETWEEN p_from AND p_to
+            GROUP BY COALESCE(r.host, 'bloomlibrary')
         )
         -- final aggregate primarily pivots row data to columnar in single row
         SELECT
@@ -154,18 +223,25 @@ BEGIN
             ) AS bookCount,
             COUNT(DISTINCT r.book_language_code) AS languageCount,
             (SELECT COUNT(DISTINCT topic) FROM d) AS topicCount,
-            -- See comment above about anonymous_id vs device_unique_id
+
+            -- See comment above about these being obsolete
             COUNT(DISTINCT r.anonymous_id) AS deviceMobileCount,
-            COUNT(DISTINCT r.anonymous_id) AS deviceCount,
             CAST(0 AS BIGINT) AS devicePCCount,
+
+            COALESCE((SELECT cnt FROM nonBrUserCounts WHERE host = 'readerapp'), 0) AS userAppCount,
+            -- See comment above about anonymous_id vs device_unique_id
+            COUNT(DISTINCT r.anonymous_id) AS userBloomReaderCount,
+            COALESCE((SELECT cnt FROM nonBrUserCounts WHERE host = 'bloompubviewer'), 0) AS userBloomPUBViewerCount,
+            COALESCE((SELECT cnt FROM nonBrUserCounts WHERE host = 'bloomlibrary'), 0) AS userWebCount,
+
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'epub'), 0) AS downloadsEpubCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'bloompub'), 0) AS downloadsBloomPubCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'pdf'), 0) AS downloadsPdfCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'shell'), 0) AS downloadsShellbooksCount,
             COUNT(*) AS readsBloomReaderCount,
-            COUNT(*) AS bloomReaderReadCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'read'), 0) AS readsWebCount,
-            CAST(0 AS BIGINT) AS readsAppsCount
+            CAST(0 AS BIGINT) AS readsAppsCount,
+            COALESCE((SELECT cnt FROM countries), 0) AS countryCount
         FROM bloomReaderReads AS r ;
     END IF;
 END;
