@@ -5,6 +5,7 @@
 #
 # If called with --execute as the first argument, then it executes what commands are in the command file.
 # (That is, it will not overwrite any edits that have been manually, but rather will execute them)
+# Segment sync should be paused before running with --execute, then re-enabled afterward.
 
 sqlHost=bloom-analytics.postgres.database.azure.com
 

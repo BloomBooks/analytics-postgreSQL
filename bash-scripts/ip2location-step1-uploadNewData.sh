@@ -3,13 +3,16 @@
 # Preconditions
 # 1) psql must be accessible, either on the PATH or you can run this script from the directory containing the psql executable.
 # The folder is normally something like C:\Program Files\PostgreSQL\13\bin. (Replace 13 with whatever version number of PostgreSQL you have))
-# 2) Manually download the files and place them in the .../downloads directory.
+# 2) Manually download the files and place them in the ../downloads directory.
 #    (I tried to use wget, but it didn't cooperate, so we can just do it manually)
-# Go to https://lite.ip2location.com/database-download
-# Download the following three files
-# a) IP-COUNTRY (IPv4, CSV): https://lite.ip2location.com/download?id=1
-# b) IP-COUNTRY-REGION-CITY (IPv4, CSV): https://lite.ip2location.com/download?id=3
-# C) IP-COUNTRY-REGION-CITY (IPv6, CSV): https://lite.ip2location.com/download?id=13
+#    Go to https://lite.ip2location.com/database-download
+#    Download the following three files
+#      a) IP-COUNTRY (IPv4, CSV): https://lite.ip2location.com/download?id=1
+#      b) IP-COUNTRY-REGION-CITY (IPv4, CSV): https://lite.ip2location.com/download?id=3
+#      c) IP-COUNTRY-REGION-CITY (IPv6, CSV): https://lite.ip2location.com/download?id=13
+#    Unzip the zip files.
+#    Copy just the 3 CSV files to the ../downloads directory.
+# 3) This script is designed to run from cygwin
 
 
 sqlHost=bloom-analytics.postgres.database.azure.com
@@ -53,7 +56,7 @@ echo "    country_code character(2) COLLATE pg_catalog."default" NOT NULL," >> $
 echo "    country_name character varying(64) COLLATE pg_catalog.\"default\" NOT NULL," >> $commandsFileName
 echo "    region character varying(100) COLLATE pg_catalog.\"default\" NOT NULL," >> $commandsFileName
 echo "    city character varying(100) COLLATE pg_catalog.\"default\" NOT NULL," >> $commandsFileName
-echo "    CONSTRAINT "$ipv4ToLocationTableName"_db1_pkey PRIMARY KEY(ip_from, ip_to)" >> $commandsFileName
+echo "    CONSTRAINT "$ipv4ToLocationTableName"_db1_pkey PRIMARY KEY(ipv4_from, ipv4_to)" >> $commandsFileName
 echo ");" >> $commandsFileName
 echo "\copy $ipv4ToLocationTableName FROM $SCRIPT_DIR_WIN\downloads\IP2LOCATION-LITE-DB3.CSV delimiter ',' csv " >> $commandsFileName
 
@@ -68,7 +71,7 @@ echo "    country_code character(2) COLLATE pg_catalog."default" NOT NULL," >> $
 echo "    country_name character varying(64) COLLATE pg_catalog.\"default\" NOT NULL," >> $commandsFileName
 echo "    region character varying(100) COLLATE pg_catalog.\"default\" NOT NULL," >> $commandsFileName
 echo "    city character varying(100) COLLATE pg_catalog.\"default\" NOT NULL," >> $commandsFileName
-echo "    CONSTRAINT "$ipv6ToLocationTableName"_db1_pkey PRIMARY KEY(ip_from, ip_to)" >> $commandsFileName
+echo "    CONSTRAINT "$ipv6ToLocationTableName"_db1_pkey PRIMARY KEY(ipv6_from, ipv6_to)" >> $commandsFileName
 echo ");" >> $commandsFileName
 echo "\copy $ipv6ToLocationTableName FROM $SCRIPT_DIR_WIN\downloads\IP2LOCATION-LITE-DB3.IPV6.CSV delimiter ',' csv " >> $commandsFileName
 
