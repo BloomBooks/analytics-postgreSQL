@@ -1,17 +1,17 @@
 #!/bin/sh
-#
+# (These comments have been incorporated and expanded upon in UPDATE-IP-TABLES.md
 # Preconditions
 # 1) psql must be accessible, either on the PATH or you can run this script from the directory containing the psql executable.
 # The folder is normally something like C:\Program Files\PostgreSQL\13\bin. (Replace 13 with whatever version number of PostgreSQL you have))
-# 2) Manually download the files and place them in the ../downloads directory.
+# 2) Manually download the files and place them in the ./downloads directory.
 #    (I tried to use wget, but it didn't cooperate, so we can just do it manually)
-#    Go to https://lite.ip2location.com/database-download
+#    Go to https://lite.ip2location.com/database-download.  (This will require login.)
 #    Download the following three files
 #      a) IP-COUNTRY (IPv4, CSV): https://lite.ip2location.com/download?id=1
 #      b) IP-COUNTRY-REGION-CITY (IPv4, CSV): https://lite.ip2location.com/download?id=3
 #      c) IP-COUNTRY-REGION-CITY (IPv6, CSV): https://lite.ip2location.com/download?id=13
 #    Unzip the zip files.
-#    Copy just the 3 CSV files to the ../downloads directory.
+#    Copy just the 3 CSV files to the ./downloads directory.
 # 3) This script is designed to run from cygwin
 
 
@@ -20,11 +20,11 @@ sqlHost=bloom-analytics.postgres.database.azure.com
 # This returns the directory that contains the script file.
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 SCRIPT_DIR_WIN=$(cygpath -w $SCRIPT_DIR)
-#echo $SCRIPT_DIR
+#echo SCRIPTDIR=$SCRIPT_DIR
 
 commandsFileName=$SCRIPT_DIR/temp_psqlHelperCommands.txt
 commandsFileNameWin=$(cygpath -w $commandsFileName)
-#echo $commandsFileName
+#echo commandsFileName=$commandsFileName
 
 dateStr=$(date +"%Y_%m_%d")
 
@@ -32,7 +32,7 @@ dateStr=$(date +"%Y_%m_%d")
 ## ip -> location (ip2location)
 ########
 ipToLocationTableName=ip2location_as_of_$dateStr
-#echo $ip2locationTableName
+#echo ipToLocationTableName=$ipToLocationTableName
 
 # FYI: ip2location uses double quote as the quote character and as the escape character.
 #      If desired, you can explicitly set these options in the \copy command (quote '"' escape '"'), but they're the default, so I didn't bother
