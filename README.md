@@ -39,7 +39,13 @@ You can use `/queries/find_dependent_views.sql` to query for which views depend 
 
 Don't forget the recreation of indexes or the rerunning of any `GRANT` statements which are needed!
 
-## Geographic information
+## Updating geographic information
+
+The file UPDATE-IP-TABLES.md contains instructions on how to update the tables we currently use
+for mapping from IP addresses to geographic locations.  This updating should be done periodically
+but not too often since each time we update it, we leave the old data in place.
+
+## Geographic information (historical?)
 
 The `bash-scripts` folder contains a pair of bash shell scripts that were used to create and populate the public geography_city_centers and geography_regioncodes tables. The data for these tables (which provide latitude and longitude information for cities and towns around the world) is from download.geonames.org/export/dump/. The exact details are provided in these shell scripts.
 
