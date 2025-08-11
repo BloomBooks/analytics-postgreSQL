@@ -61,6 +61,8 @@ This operation will take a few minutes, creating new database tables named somet
 files.  A temporary file named `temp_psqlHelperCommands.txt` is created in the `bash-scripts`
 folder by this process.  This can be deleted after everything is done.
 
+Note: in August 2025, we needed to free up disk space for the database. We backed up the existing historical IP2Location tables in [Drive](https://drive.google.com/drive/u/0/folders/1cqIgr7foM8Q31msfSH6t3v-kZ0cKoCXw) and deleted the tables.
+
 Once the first script finishes, you can run the second script to generate a temporary script
 to actually update the real tables.  (First ensure that line ending are compatible with bash.)
 ```
