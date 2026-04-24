@@ -73,12 +73,11 @@ BEGIN
         bloomReaderReads AS (
             SELECT
                 r.book_instance_id,
-                r.anonymous_id,
+                r.anonymous_id
                 -- Aug 2022 we were forced to stop collecting actual device ID by Android policy changes.
                 -- Segment switched to a new "device ID" but that meant all our device stats were going
                 -- to double over time. So we switched to user data instead. See BL-11380.
-                --r.device_unique_id,
-                r.book_language_code
+                --r.device_unique_id
             FROM common.mv_pages_read AS r
             INNER JOIN b ON
                 r.book_instance_id = b.book_instance_id
@@ -86,8 +85,10 @@ BEGIN
                 r."source" = 'bloomreader'
                 AND r.date_local BETWEEN p_from AND p_to
         ),
-        countries AS (
-            SELECT COUNT(DISTINCT country_code) AS cnt
+        countryAndLanguageCounts AS (
+            SELECT
+                COUNT(DISTINCT country_code) AS countries,
+                COUNT(DISTINCT book_language_code) AS languages
             FROM common.mv_pages_read r
             INNER JOIN b ON
                 r.book_instance_id = b.book_instance_id
@@ -124,7 +125,7 @@ BEGIN
                         FROM bloomReaderReads
                 ) AS u
             ) AS bookCount,
-            COUNT(DISTINCT r.book_language_code) AS languageCount,
+            COALESCE((SELECT languages FROM countryAndLanguageCounts), 0) AS languageCount,
             (SELECT COUNT(DISTINCT topic) FROM d) AS topicCount,
 
             -- See comment above about these being obsolete
@@ -144,7 +145,7 @@ BEGIN
             COUNT(*) AS readsBloomReaderCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'read'), 0) AS readsWebCount,
             CAST(0 AS BIGINT) AS readsAppsCount,
-            COALESCE((SELECT cnt FROM countries), 0) AS countryCount
+            COALESCE((SELECT countries FROM countryAndLanguageCounts), 0) AS countryCount
         FROM bloomReaderReads AS r;
     -- no temp table data required
     ELSE RETURN QUERY
@@ -174,8 +175,7 @@ BEGIN
             SELECT
                 r.book_instance_id,
                 -- See comment above about anonymous_id vs device_unique_id
-                r.anonymous_id,
-                r.book_language_code
+                r.anonymous_id
             FROM common.mv_pages_read AS r
             WHERE
                 r."source" = 'bloomreader'
@@ -183,12 +183,15 @@ BEGIN
                 AND (p_country IS NULL OR r.country = p_country)
                 AND r.date_local BETWEEN p_from AND p_to
         ),
-        countries AS (
-            SELECT COUNT(DISTINCT country_code) AS cnt
+        countryAndLanguageCounts AS (
+            SELECT
+                COUNT(DISTINCT country_code) AS countries,
+                COUNT(DISTINCT book_language_code) AS languages
             FROM common.mv_pages_read r
-            INNER JOIN b ON
-                r.book_instance_id = b.book_instance_id
-            WHERE r.date_local BETWEEN p_from AND p_to
+            WHERE
+                (p_branding IS NULL OR r.book_branding = p_branding)
+                AND (p_country IS NULL OR r.country = p_country)
+                AND r.date_local BETWEEN p_from AND p_to
         ),
         -- This represents some cruft in our model.
         -- Currently, everything comes into either the
@@ -202,10 +205,10 @@ BEGIN
             SELECT COALESCE(r.host, 'bloomlibrary') AS host,
                 COUNT(DISTINCT anonymous_id) AS cnt
             FROM common.mv_pages_read AS r
-            INNER JOIN b ON
-                r.book_instance_id = b.book_instance_id
             WHERE 
                 r."source" = 'bloomlibrary'
+                AND (p_branding IS NULL OR r.book_branding = p_branding)
+                AND (p_country IS NULL OR r.country = p_country)
                 AND r.date_local BETWEEN p_from AND p_to
             GROUP BY COALESCE(r.host, 'bloomlibrary')
         )
@@ -221,7 +224,7 @@ BEGIN
                         FROM bloomReaderReads
                 ) AS u
             ) AS bookCount,
-            COUNT(DISTINCT r.book_language_code) AS languageCount,
+            COALESCE((SELECT languages FROM countryAndLanguageCounts), 0) AS languageCount,
             (SELECT COUNT(DISTINCT topic) FROM d) AS topicCount,
 
             -- See comment above about these being obsolete
@@ -241,7 +244,7 @@ BEGIN
             COUNT(*) AS readsBloomReaderCount,
             COALESCE((SELECT cnt FROM dEvent WHERE event_type = 'read'), 0) AS readsWebCount,
             CAST(0 AS BIGINT) AS readsAppsCount,
-            COALESCE((SELECT cnt FROM countries), 0) AS countryCount
+            COALESCE((SELECT countries FROM countryAndLanguageCounts), 0) AS countryCount
         FROM bloomReaderReads AS r ;
     END IF;
 END;
